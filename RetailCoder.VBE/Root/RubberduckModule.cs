@@ -34,6 +34,7 @@ using System.Globalization;
 using Ninject.Extensions.Interception.Infrastructure.Language;
 using Rubberduck.Parsing.Symbols;
 using Rubberduck.UI.CodeExplorer.Commands;
+using Rubberduck.UI.ReferenceBrowser;
 
 namespace Rubberduck.Root
 {
@@ -68,6 +69,7 @@ namespace Rubberduck.Root
             Bind<RubberduckCommandBar>().ToSelf().InSingletonScope();
             Bind<TestExplorerModel>().ToSelf().InSingletonScope();
             Bind<IOperatingSystem>().To<WindowsOperatingSystem>().InSingletonScope();
+            Bind<RegisteredLibraryModelService>().To<RegisteredLibraryModelService>().InSingletonScope();
 
             BindCodeInspectionTypes();
 
@@ -144,7 +146,7 @@ namespace Rubberduck.Root
             ConfigureFormDesignerContextMenu();
             ConfigureFormDesignerControlContextMenu();
             ConfigureProjectExplorerContextMenu();
-            
+
 
             BindWindowsHooks();
         }
@@ -234,11 +236,11 @@ namespace Rubberduck.Root
                 }
                 else
                 {
-                    var binding = Bind<IInspection>().To(inspection).InSingletonScope();
-                    binding.Intercept().With<TimedCallLoggerInterceptor>();
-                    binding.Intercept().With<EnumerableCounterInterceptor<InspectionResultBase>>();
-                }
+                var binding = Bind<IInspection>().To(inspection).InSingletonScope();
+                binding.Intercept().With<TimedCallLoggerInterceptor>();
+                binding.Intercept().With<EnumerableCounterInterceptor<InspectionResultBase>>();
             }
+        }
         }
 
         private void ConfigureRubberduckMenu()
@@ -384,6 +386,8 @@ namespace Rubberduck.Root
                 Kernel.Get<AboutCommandMenuItem>(),
                 Kernel.Get<SettingsCommandMenuItem>(),
                 Kernel.Get<InspectionResultsCommandMenuItem>(),
+                Kernel.Get<ShowSourceControlPanelCommandMenuItem>(),
+                Kernel.Get<ReferenceBrowserCommandMenuItem>(),
                 GetUnitTestingParentMenu(),
                 GetSmartIndenterParentMenu(),
                 GetToolsParentMenu(),

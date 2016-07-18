@@ -17,6 +17,8 @@ namespace Rubberduck.UI.Command.MenuItems.ParentMenus
         Navigate,
         Tools,
         CodeInspections,
+        SourceControl,
+        ReferenceBrowser,
         Settings,
         About,
     }
