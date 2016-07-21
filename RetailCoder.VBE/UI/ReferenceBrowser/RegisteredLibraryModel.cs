@@ -3,23 +3,19 @@ using Kavod.ComReflection;
 
 namespace Rubberduck.UI.ReferenceBrowser
 {
-    public class RegisteredLibraryModel : VbaReferenceModel
+    public class RegisteredLibraryModel : IReferenceModel
     {
-        private readonly LibraryRegistration _registration;
+        private readonly LibraryRegistration _library;
 
-        internal RegisteredLibraryModel(LibraryRegistration registration)
+        internal RegisteredLibraryModel(LibraryRegistration library)
         {
-            _registration = registration;
+            _library = library;
         }
 
-        public override string FilePath { get { return _registration.FilePath; } }
-
-        public override string Name { get { return _registration.Name; } }
-
-        public override short MajorVersion { get { return _registration.MajorVersion; } }
-
-        public override short MinorVersion { get { return _registration.MinorVersion; } }
-
-        public override Guid Guid { get { return _registration.Guid; } }
+        public string FilePath { get { return _library.FilePath; } }
+        public string Name { get { return _library.Name; } }
+        public short MajorVersion { get { return _library.MajorVersion; } }
+        public short MinorVersion { get { return _library.MinorVersion; } }
+        public Guid Guid { get { return _library.Guid; } }
     }
 }

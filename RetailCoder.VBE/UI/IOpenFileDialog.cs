@@ -8,6 +8,11 @@ using System.Windows.Forms;
 
 namespace Rubberduck.UI
 {
+    public interface IOpenFileDialogFactory
+    {
+        IOpenFileDialog Create();
+    }
+
     public interface IOpenFileDialog : IDisposable
     {
         event EventHandler Disposed;

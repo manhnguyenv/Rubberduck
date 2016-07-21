@@ -69,7 +69,7 @@ namespace Rubberduck.Root
             Bind<RubberduckCommandBar>().ToSelf().InSingletonScope();
             Bind<TestExplorerModel>().ToSelf().InSingletonScope();
             Bind<IOperatingSystem>().To<WindowsOperatingSystem>().InSingletonScope();
-            Bind<RegisteredLibraryModelService>().To<RegisteredLibraryModelService>().InSingletonScope();
+            Bind<RegisteredCOMLibraryService>().To<RegisteredCOMLibraryService>().InSingletonScope();
 
             BindCodeInspectionTypes();
 

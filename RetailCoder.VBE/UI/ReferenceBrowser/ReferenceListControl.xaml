@@ -10,7 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="68" />
         </Grid.RowDefinitions>
 
         <ListView x:Name="TypeLibs"
@@ -43,7 +43,7 @@
         <StackPanel Grid.Row="1"
                     DataContext="{Binding SelectedItem, ElementName=TypeLibs}"
                     d:DataContext="{d:DesignInstance local:RegisteredLibraryViewModel}">
-            
+
             <TextBlock Margin="0,5,0,0">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="\{0\}: \{1\}">

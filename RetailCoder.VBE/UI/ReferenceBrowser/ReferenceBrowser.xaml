@@ -16,10 +16,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
 
                 <TextBlock Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ReferenceBrowser_Filter}"
                            Margin="5"
@@ -28,14 +24,65 @@
                          HorizontalAlignment="Stretch"
                          Margin="5"
                          Padding="5"
-                         Grid.Column="1"
                          Grid.Row="0"/>
-                
-                <local:ReferenceListControl DataContext="{Binding ComReferences}"
-                                            Margin="5"
-                                            Grid.Column="0"
-                                            Grid.Row="1"
-                                            Grid.ColumnSpan="2"/>
+
+                <ListView x:Name="TypeLibs" Margin="5"
+                          Grid.Row="1"
+                          ItemsSource="{Binding ComReferences}"
+                          IsSynchronizedWithCurrentItem="True">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="30">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="local:RegisteredLibraryViewModel">
+                                        <CheckBox IsChecked="{Binding IsActiveProjectReference}" 
+                                                  IsEnabled="{Binding CanRemoveReference}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="local:RegisteredLibraryViewModel">
+                                        <TextBlock Text="{Binding Name}"
+                                                   ToolTip="{Binding FilePath}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Grid.Row="1"
+                    DataContext="{Binding SelectedItem, ElementName=TypeLibs}"
+                    d:DataContext="{d:DesignInstance local:RegisteredLibraryViewModel}">
+
+                    <TextBlock Margin="0,5,0,0">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="\{0\}: \{1\}">
+                                <Binding Path="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=Name}" />
+                                <Binding Path="Name" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,5,0,0">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="\{0\}: \{1\}">
+                                <Binding Path="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=Path}" />
+                                <Binding Path="FilePath" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,5,0,5">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="\{0\}: \{1\}">
+                                <Binding Path="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=Guid}" />
+                                <Binding Path="Guid" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+
             </Grid>
         </TabItem>
 
@@ -69,7 +116,6 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Recent"
-                 IsEnabled="False"/>
+        <TabItem Header="Recent" IsEnabled="False"/>
     </TabControl>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.Vbe.Interop;
 using NLog;
 using Rubberduck.UI.ReferenceBrowser;
@@ -12,23 +13,28 @@ namespace Rubberduck.UI.Command
     public class ReferenceBrowserCommand : CommandBase
     {
         private readonly VBE _vbe;
-        private readonly RegisteredLibraryModelService _service;
-        private readonly IOpenFileDialog _filePicker;
+        private readonly IRegisteredCOMLibraryService _service;
+        private readonly IMessageBox _messageBox;
+        private readonly IOpenFileDialogFactory _pickerFactory;
 
-        public ReferenceBrowserCommand(VBE vbe, RegisteredLibraryModelService service, IOpenFileDialog filePicker) 
+        public ReferenceBrowserCommand(VBE vbe, IRegisteredCOMLibraryService service, IMessageBox messageBox, IOpenFileDialogFactory pickerFactory) 
             : base(LogManager.GetCurrentClassLogger())
         {
             _vbe = vbe;
             _service = service;
-            _filePicker = filePicker;
+            _messageBox = messageBox;
+            _pickerFactory = pickerFactory;
         }
 
         protected override void ExecuteImpl(object parameter)
         {
-            using (var vm = new ReferenceBrowserViewModel(_vbe, _service, _filePicker))
-            using (var dialog = new ReferenceBrowserWindow(vm))
+            var viewModel = new ReferenceBrowserViewModel(_vbe, _service, _pickerFactory, _messageBox);
+            using (var window = new ReferenceBrowserWindow(viewModel))
             {
-                dialog.ShowDialog();
+                if (window.ShowDialog() == DialogResult.OK)
+                {
+                    // todo: sync viewmodel with active vbproject's references
+                }
             }
         }
     }

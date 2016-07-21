@@ -7,7 +7,6 @@ namespace Rubberduck.UI.ReferenceBrowser
         public ReferenceBrowserWindow(ReferenceBrowserViewModel viewModel)
         {
             InitializeComponent();
-
             referenceBrowser.DataContext = viewModel;
         }
     }

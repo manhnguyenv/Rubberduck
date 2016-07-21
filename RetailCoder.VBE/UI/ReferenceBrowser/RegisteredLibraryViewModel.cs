@@ -8,13 +8,15 @@ namespace Rubberduck.UI.ReferenceBrowser
     public class RegisteredLibraryViewModel : ViewModelBase, IComparable<RegisteredLibraryViewModel>
     {
         private readonly VBProject _activeProject;
+        private readonly IReferenceModel _model;
+
         private bool _isActiveReference;
         private bool _referenceIsRemovable = true;
 
-        public RegisteredLibraryViewModel(VbaReferenceModel model, VBProject activeProject)
+        public RegisteredLibraryViewModel(IReferenceModel model, VBProject activeProject)
         {
             _activeProject = activeProject;
-            Model = model;
+            _model = model;
 
             _isActiveReference = GetIsActiveProjectReference();
             if (IsActiveProjectReference)
@@ -24,7 +26,7 @@ namespace Rubberduck.UI.ReferenceBrowser
             }
         }
 
-        public VbaReferenceModel Model { get; private set; }
+        public IReferenceModel Model { get { return _model; } }
 
         public string FilePath
         {

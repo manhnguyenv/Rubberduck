@@ -2467,7 +2467,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter:.
+        ///   Looks up a localized string similar to Search:.
         /// </summary>
         public static string ReferenceBrowser_Filter {
             get {
@@ -2476,7 +2476,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reference Browser.
+        ///   Looks up a localized string similar to Add/Remove References....
         /// </summary>
         public static string ReferenceBrowser_Menu {
             get {

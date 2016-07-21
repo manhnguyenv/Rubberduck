@@ -1764,7 +1764,7 @@ All our stargazers, likers &amp; followers, for the warm fuzzies
     <value>Regular Expression Analyzer</value>
   </data>
   <data name="ReferenceBrowser_Menu" xml:space="preserve">
-    <value>Reference Browser</value>
+    <value>Add/Remove References...</value>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Filter</value>
@@ -1782,7 +1782,7 @@ All our stargazers, likers &amp; followers, for the warm fuzzies
     <value>COM</value>
   </data>
   <data name="ReferenceBrowser_Filter" xml:space="preserve">
-    <value>Filter:</value>
+    <value>Search:</value>
   </data>
   <data name="ReferenceBrowser_VBA" xml:space="preserve">
     <value>VBA</value>
