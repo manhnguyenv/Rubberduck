@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.Vbe.Interop;
+using Rubberduck.VBEditor.SafeComWrappers;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.ReferenceBrowser
 {
     public class ReferenceBrowserViewModel : ViewModelBase
     {
-        private readonly VBE _vbe;
+        private readonly IVBProject _project;
         private readonly IRegisteredCOMLibraryService _service;
-        private readonly IMessageBox _messageBox;
         private readonly ObservableCollection<RegisteredLibraryViewModel> _vbaProjectReferences;
         private readonly ObservableCollection<RegisteredLibraryViewModel> _registeredComReferences;
 
         private string _filter;
 
-        public ReferenceBrowserViewModel(VBE vbe, IRegisteredCOMLibraryService service, IOpenFileDialogFactory pickerFactory, IMessageBox messageBox)
+        public ReferenceBrowserViewModel(IVBProject project, IRegisteredCOMLibraryService service)
         {
-            _vbe = vbe;
+            _project = project;
             _service = service;
-            _messageBox = messageBox;
 
             _registeredComReferences = new ObservableCollection<RegisteredLibraryViewModel>();
 
@@ -38,7 +35,7 @@ namespace Rubberduck.UI.ReferenceBrowser
             BuildTypeLibraryReferenceViewModels();
             BuildVbaProjectReferenceViewModels();
 
-            _addVBReferenceCommand = new AddReferenceFromFileCommand(vbe);
+            _addVBReferenceCommand = new AddReferenceFromFileCommand(_project.VBE);
         }
 
         public ICollectionView ComReferences { get; private set; }
@@ -61,21 +58,7 @@ namespace Rubberduck.UI.ReferenceBrowser
         }
 
         private readonly ICommand _addVBReferenceCommand;
-        public ICommand AddVbaProjectReferenceCommand { get {return _addVBReferenceCommand; } }
-
-        private void AddVbaReference(string path)
-        {
-            try
-            {
-                var reference = _vbe.ActiveVBProject.References.AddFromFile(path);
-                CreateViewModelForVbaProjectReference(reference);
-            }
-            catch (COMException)
-            {
-                // todo: localize
-                _messageBox.Show(string.Format("Could not add reference to file or library '{0}'.", path));
-            }
-        }
+        public ICommand AddVbaProjectReferenceCommand { get { return _addVBReferenceCommand; } }
 
         private void FilterComReferences()
         {
@@ -93,32 +76,27 @@ namespace Rubberduck.UI.ReferenceBrowser
 
         private void BuildTypeLibraryReferenceViewModels()
         {
-            var viewModels = _service.GetAll()
-                .Select(item => new RegisteredLibraryViewModel(item, _vbe.ActiveVBProject));
+            var references = _service
+                .GetAll()
+                .Select(model => new RegisteredLibraryViewModel(model, _project));
 
-            foreach (var vm in viewModels)
+            foreach (var reference in references)
             {
-                _registeredComReferences.Add(vm);
+                _registeredComReferences.Add(reference);
             }
         }
 
         private void BuildVbaProjectReferenceViewModels()
         {
-            var vbaReferences = _vbe.ActiveVBProject.References
-                .OfType<Reference>()
-                .Where(r => r.Type == vbext_RefKind.vbext_rk_Project);
+            var references = _project
+                .References
+                .Where(r => r.Type == ReferenceKind.Project)
+                .Select(reference => new RegisteredLibraryViewModel(new RegisteredLibraryModel(reference), _project));
 
-            foreach (var reference in vbaReferences)
+            foreach (var reference in references)
             {
-                CreateViewModelForVbaProjectReference(reference);
+                _vbaProjectReferences.Add(reference);
             }
-        }
-
-        private void CreateViewModelForVbaProjectReference(Reference reference)
-        {
-            var model = new VbaProjectReferenceModel(reference);
-            var vm = new RegisteredLibraryViewModel(model, _vbe.ActiveVBProject);
-            _vbaProjectReferences.Add(vm);
         }
     }
 }

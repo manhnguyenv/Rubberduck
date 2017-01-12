@@ -8,7 +8,7 @@ namespace Rubberduck.UI.Command.MenuItems
     /// A command that displays the RegexAssistantDialog
     /// </summary>
     [ComVisible(false)]
-    class RegexAssistantCommand : CommandBase
+    public class RegexAssistantCommand : CommandBase
     {
         public RegexAssistantCommand() : base (LogManager.GetCurrentClassLogger())
         {

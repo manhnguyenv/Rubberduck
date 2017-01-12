@@ -1,141 +1,58 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Microsoft.Vbe.Interop;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.ReferenceBrowser
 {
     public class RegisteredLibraryViewModel : ViewModelBase, IComparable<RegisteredLibraryViewModel>
     {
-        private readonly VBProject _activeProject;
-        private readonly IReferenceModel _model;
+        private readonly IVBProject _project;
+        private readonly RegisteredLibraryModel _model;
+        private readonly bool _isActiveReference;
+        private readonly bool _canRemoveReference;
 
-        private bool _isActiveReference;
-        private bool _referenceIsRemovable = true;
-
-        public RegisteredLibraryViewModel(IReferenceModel model, VBProject activeProject)
+        public RegisteredLibraryViewModel(RegisteredLibraryModel model, IVBProject project)
         {
-            _activeProject = activeProject;
+            _project = project;
             _model = model;
 
-            _isActiveReference = GetIsActiveProjectReference();
-            if (IsActiveProjectReference)
-            {
-                var reference = GetActiveProjectReferenceByFilePath(FilePath);
-                CanRemoveReference = !reference.BuiltIn;
-            }
+            IReference reference;
+            _isActiveReference = TryGetProjectReference(_model.FilePath, out reference);
+            _canRemoveReference = reference != null && !reference.IsBuiltIn;
+
+            IsSelected = _isActiveReference;
         }
 
-        public IReferenceModel Model { get { return _model; } }
+        public string FullPath { get { return _model.FilePath; } }
+        public string Name { get { return _model.Name; } }
+        public bool IsActiveProjectReference { get { return _isActiveReference; } }
+        public bool CanRemoveReference { get { return _canRemoveReference; } }
+        public string Guid { get { return _model.Guid; } }
+        public int MinorVersion { get { return _model.MinorVersion; } }
+        public int MajorVersion { get { return _model.MajorVersion; } }
 
-        public string FilePath
+        private bool _isSelected;
+        public bool IsSelected
         {
-            get { return Model.FilePath; }
-        }
-
-        public string Name
-        {
-            get { return Model.Name; }
-        }
-
-        public bool IsActiveProjectReference
-        {
-            get { return _isActiveReference; }
+            get { return _isSelected; }
             set
             {
-                if (value == _isActiveReference)
+                if (value == _isSelected)
                 {
                     return;
                 }
-
-                if (value)
-                {
-                    AddReferenceToActiveProject();
-                    _isActiveReference = true;
-                }
-                else
-                {
-                    // this may not succeed, so we can't just change the value.
-                    var result = RemoveReferenceFromActiveProject();
-                    if (result)
-                    {
-                        _isActiveReference = false;
-                    }
-                    else
-                    {
-                        // TODO warn the user that they cannot remove this reference.
-                        // The user shouldn't be able to remove a builtin reference anyway.
-                    }
-                }
+                _isSelected = value;
                 OnPropertyChanged();
             }
         }
 
-        public bool CanRemoveReference
-        {
-            get { return _referenceIsRemovable; }
-            set
-            {
-                if (value == _referenceIsRemovable)
-                {
-                    return;
-                }
-                _referenceIsRemovable = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool IsAdded { get { return _isSelected && !_isActiveReference; } }
+        public bool IsRemoved { get { return !_isSelected && _isActiveReference; } }
 
-        public Guid Guid
+        private bool TryGetProjectReference(string path, out IReference reference)
         {
-            get { return Model.Guid; }
-        }
-
-        public short MinorVersion
-        {
-            get { return Model.MinorVersion; }
-        }
-
-        public short MajorVersion
-        {
-            get { return Model.MajorVersion; }
-        }
-
-        private void AddReferenceToActiveProject()
-        {
-            _activeProject.References.AddFromFile(FilePath);
-        }
-
-        private bool RemoveReferenceFromActiveProject()
-        {
-            // Note that it is possible that we may not be able to remove some references that
-            // are used by the VBE.  Trying to do so throws a COMException.
-            var reference = GetActiveProjectReferenceByFilePath(FilePath);
-            try
-            {
-                _activeProject.References.Remove(reference);
-                return true;
-            }
-            catch (COMException ex)
-            {
-                // check it is the COM Exception we were expecting.
-                if (ex.Message.ToLower().Contains("default reference"))
-                {
-                    return false;
-                }
-                throw;
-            }
-        }
-
-        private bool GetIsActiveProjectReference()
-        {
-            return GetActiveProjectReferenceByFilePath(FilePath) != null;
-        }
-
-        private Reference GetActiveProjectReferenceByFilePath(string filePath)
-        {
-            return _activeProject.References
-                .OfType<Reference>()
-                .SingleOrDefault(r => r.FullPath == filePath);
+            reference = _project.References.SingleOrDefault(item => item.FullPath == path);
+            return reference != null;
         }
 
         #region IComparable

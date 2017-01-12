@@ -754,6 +754,8 @@
       <DependentUpon>ExtractInterfaceDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ReferenceBrowser\AddReferenceFromFileCommand.cs" />
+    <Compile Include="UI\ReferenceBrowser\ProjectReferenceCommandParameters.cs" />
+    <Compile Include="UI\ReferenceBrowser\RemoveReferenceCommand.cs" />
     <Compile Include="UI\RegexAssistant\RegexAssistant.xaml.cs">
       <DependentUpon>RegexAssistant.xaml</DependentUpon>
     </Compile>
@@ -780,8 +782,6 @@
     <Compile Include="UI\ReferenceBrowser\ReferenceBrowserViewModel.cs" />
     <Compile Include="UI\ReferenceBrowser\RegisteredLibraryModel.cs" />
     <Compile Include="UI\ReferenceBrowser\IRegisteredCOMLibraryService.cs" />
-    <Compile Include="UI\ReferenceBrowser\VbaProjectReferenceModel.cs" />
-    <Compile Include="UI\ReferenceBrowser\IReferenceModel.cs" />
     <Compile Include="UI\RubberduckUI.de.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

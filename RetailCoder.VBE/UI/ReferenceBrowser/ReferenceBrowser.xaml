@@ -35,7 +35,7 @@
                             <GridViewColumn Width="30">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="local:RegisteredLibraryViewModel">
-                                        <CheckBox IsChecked="{Binding IsActiveProjectReference}" 
+                                        <CheckBox IsChecked="{Binding IsSelected}" 
                                                   IsEnabled="{Binding CanRemoveReference}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -44,7 +44,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="local:RegisteredLibraryViewModel">
                                         <TextBlock Text="{Binding Name}"
-                                                   ToolTip="{Binding FilePath}" />
+                                                   ToolTip="{Binding FullPath}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -68,7 +68,7 @@
                         <TextBlock.Text>
                             <MultiBinding StringFormat="\{0\}: \{1\}">
                                 <Binding Path="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=Path}" />
-                                <Binding Path="FilePath" />
+                                <Binding Path="FullPath" />
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>

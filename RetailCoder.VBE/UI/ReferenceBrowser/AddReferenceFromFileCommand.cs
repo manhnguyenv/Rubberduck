@@ -1,52 +1,23 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Microsoft.Vbe.Interop;
 using NLog;
 using Rubberduck.UI.Command;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.ReferenceBrowser
 {
-    public class ProjectReferenceCommandParameters
+    public class AddReferenceFromFileCommand : CommandBase
     {
-        private readonly string _path;
+        private readonly IVBE _vbe;
 
-        public ProjectReferenceCommandParameters(string path)
-        {
-            _path = path;
-        }
-
-        public string Path { get { return _path; } }
-        public Reference Reference { get; set; }
-    }
-
-    public class RemoveReferenceCommand : CommandBase
-    {
-        public RemoveReferenceCommand()
+        public AddReferenceFromFileCommand(IVBE vbe)
             : base(LogManager.GetCurrentClassLogger())
         {
-            
+            _vbe = vbe;
         }
 
         protected override bool CanExecuteImpl(object parameter)
         {
-            return base.CanExecuteImpl(parameter);
-        }
-
-        protected override void ExecuteImpl(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class AddReferenceFromFileCommand : CommandBase
-    {
-        private readonly VBE _vbe;
-
-        public AddReferenceFromFileCommand(VBE vbe)
-            : base(LogManager.GetCurrentClassLogger())
-        {
-            _vbe = vbe;
+            return !_vbe.ActiveVBProject.IsWrappingNullReference;
         }
 
         protected override void ExecuteImpl(object parameter)

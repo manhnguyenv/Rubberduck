@@ -69,7 +69,6 @@ namespace Rubberduck.Root
             //Bind<GitProvider>().ToSelf().InSingletonScope();
             Bind<TestExplorerModel>().ToSelf().InSingletonScope();
             Bind<IOperatingSystem>().To<WindowsOperatingSystem>().InSingletonScope();
-            Bind<RegisteredCOMLibraryService>().To<RegisteredCOMLibraryService>().InSingletonScope();
 
             BindCodeInspectionTypes();
 

@@ -4,7 +4,7 @@ namespace Rubberduck.UI.Command.MenuItems
 {
     class RegexAssistantCommandMenuItem : CommandMenuItemBase
     {
-        public RegexAssistantCommandMenuItem(CommandBase command) : base(command)
+        public RegexAssistantCommandMenuItem(RegexAssistantCommand command) : base(command)
         {
         }
 
