@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Rubberduck.Inspections.Abstract;
+using Rubberduck.Inspections.Resources;
+using Rubberduck.Inspections.Results;
 using Rubberduck.Parsing.Grammar;
 using Rubberduck.Parsing.VBA;
 
@@ -16,7 +19,7 @@ namespace Rubberduck.Inspections
         }
 
         public override string Meta { get { return InspectionsUI.ObsoleteCommentSyntaxInspectionMeta; } }
-        public override string Description { get { return InspectionsUI.ObsoleteCommentSyntaxInspectionResultFormat; } }
+        public override string Description { get { return InspectionsUI.ObsoleteCommentSyntaxInspectionName; } }
         public override CodeInspectionType InspectionType { get {return CodeInspectionType.LanguageOpportunities; } }
 
         public override IEnumerable<InspectionResultBase> GetInspectionResults()

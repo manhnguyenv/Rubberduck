@@ -122,16 +122,16 @@ namespace RubberduckTests.SmartIndenter
         }
 
         //https://github.com/rubberduck-vba/Rubberduck/issues/1858
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2233
         [TestMethod]
         [TestCategory("Indenter")]
-        public void IfThenElseStatementWorks()
+        public void IfThenBareElseStatementWorks()
         {
             var code = new[]
             {
                 "Public Sub Test()",
                 "If Foo And Bar Then Foobar Else",
                 "Baz",
-                "End If",
                 "End Sub"
             };
 
@@ -139,8 +139,7 @@ namespace RubberduckTests.SmartIndenter
             {
                 "Public Sub Test()",
                 "    If Foo And Bar Then Foobar Else",
-                "        Baz",
-                "    End If",
+                "    Baz",
                 "End Sub"
             };
 
@@ -152,13 +151,15 @@ namespace RubberduckTests.SmartIndenter
         //https://github.com/rubberduck-vba/Rubberduck/issues/1858
         [TestMethod]
         [TestCategory("Indenter")]
-        public void ElseIfThenElseStatementWorks()
+        public void SingleLineElseIfElseStatementWorks()
         {
             var code = new[]
             {
                 "Public Sub Test()",
-                "If Foo Then NotFoobar",
-                "ElseIf Foo And Bar Then Foobar Else",
+                "If x Then",
+                "NotFoobar",
+                "ElseIf Foo And Bar Then Foobar",
+                "Else",
                 "Baz",
                 "End If",
                 "End Sub"
@@ -167,8 +168,10 @@ namespace RubberduckTests.SmartIndenter
             var expected = new[]
             {
                 "Public Sub Test()",
-                "    If Foo Then NotFoobar",
-                "    ElseIf Foo And Bar Then Foobar Else",
+                "    If x Then",
+                "        NotFoobar",
+                "    ElseIf Foo And Bar Then Foobar",
+                "    Else",
                 "        Baz",
                 "    End If",
                 "End Sub"
@@ -233,6 +236,60 @@ namespace RubberduckTests.SmartIndenter
                 "5   If Foo Then",
                 "10      Debug.Print",
                 "15  End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [TestMethod]
+        [TestCategory("Indenter")]
+        public void NegativeLineNumbersWork()
+        {
+            var code = new[]
+            {
+                "Private Sub Test()",
+                "-5 If Foo Then",
+                "-10 Debug.Print",
+                "-15 End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Private Sub Test()",
+                "-5  If Foo Then",
+                "-10     Debug.Print",
+                "-15 End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [TestMethod]
+        [TestCategory("Indenter")]
+        public void HexLineNumbersWork()
+        {
+            var code = new[]
+            {
+                "Private Sub Test()",
+                "&HAAA If Foo Then",
+                "&HABE Debug.Print",
+                "&HAD2 End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Private Sub Test()",
+                "2730 If Foo Then",
+                "2750    Debug.Print",
+                "2770 End If",
                 "End Sub"
             };
 
@@ -428,6 +485,259 @@ namespace RubberduckTests.SmartIndenter
                 "    If Foo Then",
                 "        Debug.Print",
                 "    End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //http://chat.stackexchange.com/transcript/message/33575758#33575758
+        [TestMethod]                // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]
+        public void SubFooTokenIsNotInterpretedAsProcedureStart()
+        {
+            var code = new[]
+            {
+                "Public Sub Test()",
+                "If Subject = 0 Then",
+                "Subject = 1",
+                "End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub Test()",
+                "    If Subject = 0 Then",
+                "        Subject = 1",
+                "    End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2133
+        [TestMethod]                // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]  
+        public void MultiLineDimWithCommasDontAlignDimWorks()
+        {
+            var code = new[]
+            {
+                "Public Sub FooBar()",
+                "Dim foo As Boolean, bar As String _",
+                ", baz As String _",
+                ", somethingElse As String",
+                "Dim x As Integer",
+                "If Not foo Then",
+                "x = 1",
+                "End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub FooBar()",
+                "    Dim foo As Boolean, bar As String _",
+                "    , baz As String _",
+                "    , somethingElse As String",
+                "    Dim x As Integer",
+                "    If Not foo Then",
+                "        x = 1",
+                "    End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () =>
+            {
+                var s = IndenterSettingsTests.GetMockIndenterSettings();
+                s.AlignDims = false;
+                return s;
+            });
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2133
+        [TestMethod]                // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]
+        public void MultiLineDimWithCommasAlignDimsWorks()
+        {
+            var code = new[]
+            {
+                "Public Sub FooBar()",
+                "Dim foo As Boolean, bar As String _",
+                ", baz As String _",
+                ", somethingElse As String",
+                "Dim x As Integer",
+                "If Not foo Then",
+                "x = 1",
+                "End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub FooBar()",
+                "    Dim foo   As Boolean, bar As String _",
+                "    , baz     As String _",
+                "    , somethingElse As String",
+                "    Dim x     As Integer",
+                "    If Not foo Then",
+                "        x = 1",
+                "    End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () =>
+            {
+                var s = IndenterSettingsTests.GetMockIndenterSettings();
+                s.AlignDims = true;
+                return s;
+            });
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2133
+        [TestMethod]                // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]
+        public void MultiLineDimWithCommasDontIndentFirstBlockWorks()
+        {
+            var code = new[]
+            {
+                "Public Sub FooBar()",
+                "Dim foo As Boolean, bar As String _",
+                ", baz As String _",
+                ", somethingElse As String",
+                "Dim x As Integer",
+                "If Not foo Then",
+                "x = 1",
+                "End If",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub FooBar()",
+                "Dim foo As Boolean, bar As String _",
+                ", baz As String _",
+                ", somethingElse As String",
+                "Dim x As Integer",
+                "    If Not foo Then",
+                "        x = 1",
+                "    End If",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () =>
+            {
+                var s = IndenterSettingsTests.GetMockIndenterSettings();
+                s.IndentFirstDeclarationBlock = false;
+                return s;
+            });
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [TestMethod]       
+        [TestCategory("Indenter")]
+        public void QuotesInsideStringLiteralsWork()
+        {
+            var code = new[]
+            {
+                "Public Sub Test()",
+                "Debug.Print \"This is a \"\" in the middle of a string.\"",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub Test()",
+                "    Debug.Print \"This is a \"\" in the middle of a string.\"",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [TestMethod]
+        [TestCategory("Indenter")]
+        public void SingleQuoteInEndOfLineCommentWorks()
+        {
+            var code = new[]
+            {
+                "Public Sub Test()",
+                "Debug.Print Chr$(34) 'Prints a single '\"' character.",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Public Sub Test()",
+                "    Debug.Print Chr$(34)                         'Prints a single '\"' character.",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //http://chat.stackexchange.com/transcript/message/33933348#33933348
+        [TestMethod]        // Broken in VB6 SmartIndenter. Also broken in the code's conception. Sheesh - keep the cat off the keyboard.
+        [TestCategory("Indenter")]
+        public void BracketedIdentifiersWork()
+        {
+            var code = new[]
+            {
+                "Sub test()",
+                "Dim _",
+                "s _",
+                "( _",
+                "[Option _ Explicit] _",
+                "+ _",
+                "1 _",
+                "To _",
+                "( _",
+                "[Evil : \"\" Comment \" 'here] _",
+                ") _",
+                "+ _",
+                "[End _ Sub] _",
+                ") _",
+                "As _",
+                "String _",
+                "* _",
+                "25",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Sub test()",
+                "    Dim _",
+                "    s _",
+                "    ( _",
+                "    [Option _ Explicit] _",
+                "    + _",
+                "    1 _",
+                "    To _",
+                "    ( _",
+                "    [Evil : \"\" Comment \" 'here] _",
+                "    ) _",
+                "    + _",
+                "    [End _ Sub] _",
+                "    ) _",
+                "    As _",
+                "    String _",
+                "    * _",
+                "    25",
                 "End Sub"
             };
 

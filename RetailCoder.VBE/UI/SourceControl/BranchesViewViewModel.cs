@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
 using NLog;
 using Rubberduck.SourceControl;
 using Rubberduck.UI.Command;
@@ -60,6 +59,22 @@ namespace Rubberduck.UI.SourceControl
             DestinationBranch = CurrentBranch;
         }
 
+        public void ResetView()
+        {
+            Logger.Trace("Resetting view");
+
+            _provider = null;
+            _currentBranch = string.Empty;
+            SourceBranch = string.Empty;
+            DestinationBranch = CurrentBranch;
+
+            OnPropertyChanged("LocalBranches");
+            OnPropertyChanged("PublishedBranches");
+            OnPropertyChanged("UnpublishedBranches");
+            OnPropertyChanged("Branches");
+            OnPropertyChanged("CurrentBranch");
+        }
+
         public SourceControlTab Tab { get { return SourceControlTab.Branches; } }
 
         public IEnumerable<string> Branches
@@ -67,7 +82,7 @@ namespace Rubberduck.UI.SourceControl
             get
             {
                 return Provider == null
-                  ? new string[] { }
+                  ? Enumerable.Empty<string>()
                   : Provider.Branches.Select(b => b.Name);
             }
         }
@@ -77,7 +92,7 @@ namespace Rubberduck.UI.SourceControl
             get
             {
                 return Provider == null
-                    ? new string[] { }
+                    ? Enumerable.Empty<string>()
                     : Provider.Branches.Where(b => !b.IsRemote).Select(b => b.Name);
             }
         }
@@ -87,7 +102,7 @@ namespace Rubberduck.UI.SourceControl
             get
             {
                 return Provider == null
-                    ? new string[] { }
+                    ? Enumerable.Empty<string>()
                     : Provider.Branches.Where(b => !b.IsRemote && !string.IsNullOrEmpty(b.TrackingName)).Select(b => b.Name);
             }
         }
@@ -97,7 +112,7 @@ namespace Rubberduck.UI.SourceControl
             get
             {
                 return Provider == null
-                    ? new string[] { }
+                    ? Enumerable.Empty<string>()
                     : Provider.Branches.Where(b => !b.IsRemote && string.IsNullOrEmpty(b.TrackingName)).Select(b => b.Name);
             }
         }
@@ -115,14 +130,17 @@ namespace Rubberduck.UI.SourceControl
 
                     CreateBranchSource = value;
 
+                    if (Provider == null) { return; }
+
                     try
                     {
-                        OnLoadingComponentsStarted();
+                        Provider.NotifyExternalFileChanges = false;
+                        Provider.HandleVbeSinkEvents = false;
                         Provider.Checkout(_currentBranch);
                     }
                     catch (SourceControlException ex)
                     {
-                        RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
+                        RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
                     }
                     catch
                     {
@@ -130,7 +148,8 @@ namespace Rubberduck.UI.SourceControl
                             RubberduckUI.SourceControl_UnknownErrorMessage, NotificationType.Error);
                         throw;
                     }
-                    OnLoadingComponentsCompleted();
+                    Provider.NotifyExternalFileChanges = true;
+                    Provider.HandleVbeSinkEvents = true;
                 }
             }
         }
@@ -230,10 +249,12 @@ namespace Rubberduck.UI.SourceControl
             {
                 return false;
             }
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var section in name.Split('/'))
             {
-                isValidName = section.FirstOrDefault() != '.' &&
-                              !section.EndsWith(".lock");
+                isValidName = isValidName 
+                    && section.FirstOrDefault() != '.' 
+                    && !section.EndsWith(".lock");
             }
 
             return isValidName;
@@ -305,7 +326,7 @@ namespace Rubberduck.UI.SourceControl
             }
             catch (SourceControlException ex)
             {
-                RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
+                RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
             }
             catch
             {
@@ -330,7 +351,8 @@ namespace Rubberduck.UI.SourceControl
         {
             Logger.Trace("Merging branch {0} into branch {1}", SourceBranch, DestinationBranch);
 
-            OnLoadingComponentsStarted();
+            Provider.NotifyExternalFileChanges = false;
+            Provider.HandleVbeSinkEvents = false;
 
             try
             {
@@ -338,20 +360,25 @@ namespace Rubberduck.UI.SourceControl
             }
             catch (SourceControlException ex)
             {
-                RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
-                OnLoadingComponentsCompleted();
+                RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
+                Provider.NotifyExternalFileChanges = true;
+                Provider.HandleVbeSinkEvents = true;
                 return;
             }
             catch
             {
                 RaiseErrorEvent(RubberduckUI.SourceControl_UnknownErrorTitle,
                     RubberduckUI.SourceControl_UnknownErrorMessage, NotificationType.Error);
+                Provider.NotifyExternalFileChanges = true;
+                Provider.HandleVbeSinkEvents = true;
                 throw;
             }
 
             DisplayMergeBranchesGrid = false;
             RaiseErrorEvent(RubberduckUI.SourceControl_MergeStatus, string.Format(RubberduckUI.SourceControl_SuccessfulMerge, SourceBranch, DestinationBranch), NotificationType.Info);
-            OnLoadingComponentsCompleted();
+
+            Provider.NotifyExternalFileChanges = true;
+            Provider.HandleVbeSinkEvents = true;
         }
 
         private void MergeBranchCancel()
@@ -369,7 +396,7 @@ namespace Rubberduck.UI.SourceControl
             }
             catch (SourceControlException ex)
             {
-                RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
+                RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
             }
             catch
             {
@@ -380,8 +407,7 @@ namespace Rubberduck.UI.SourceControl
 
             RefreshView();
         }
-
-
+        
         private bool CanDeleteBranch(bool isBranchPublished)
         {
             return isBranchPublished
@@ -398,7 +424,7 @@ namespace Rubberduck.UI.SourceControl
             }
             catch (SourceControlException ex)
             {
-                RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
+                RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
             }
             catch
             {
@@ -419,7 +445,7 @@ namespace Rubberduck.UI.SourceControl
             }
             catch (SourceControlException ex)
             {
-                RaiseErrorEvent(ex.Message, ex.InnerException.Message, NotificationType.Error);
+                RaiseErrorEvent(ex.Message, ex.InnerException, NotificationType.Error);
             }
             catch
             {
@@ -507,32 +533,21 @@ namespace Rubberduck.UI.SourceControl
         }
 
         public event EventHandler<ErrorEventArgs> ErrorThrown;
-        private void RaiseErrorEvent(string message, string innerMessage, NotificationType notificationType)
+        private void RaiseErrorEvent(string message, Exception innerException, NotificationType notificationType)
         {
             var handler = ErrorThrown;
             if (handler != null)
             {
-                handler(this, new ErrorEventArgs(message, innerMessage, notificationType));
-            }
-        }
-        
-        public event EventHandler<EventArgs> LoadingComponentsStarted;
-        private void OnLoadingComponentsStarted()
-        {
-            var handler = LoadingComponentsStarted;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
+                handler(this, new ErrorEventArgs(message, innerException, notificationType));
             }
         }
 
-        public event EventHandler<EventArgs> LoadingComponentsCompleted;
-        private void OnLoadingComponentsCompleted()
+        private void RaiseErrorEvent(string title, string message, NotificationType notificationType)
         {
-            var handler = LoadingComponentsCompleted;
+            var handler = ErrorThrown;
             if (handler != null)
             {
-                handler(this, EventArgs.Empty);
+                handler(this, new ErrorEventArgs(title, message, notificationType));
             }
         }
     }

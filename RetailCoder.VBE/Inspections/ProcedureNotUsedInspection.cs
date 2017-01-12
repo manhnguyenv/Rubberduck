@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Vbe.Interop;
 using Rubberduck.Common;
+using Rubberduck.Inspections.Abstract;
+using Rubberduck.Inspections.Resources;
+using Rubberduck.Inspections.Results;
 using Rubberduck.Parsing.Grammar;
 using Rubberduck.Parsing.Symbols;
 using Rubberduck.Parsing.VBA;
-using Rubberduck.VBEditor;
+using Rubberduck.VBEditor.SafeComWrappers;
 
 namespace Rubberduck.Inspections
 {
@@ -19,6 +21,16 @@ namespace Rubberduck.Inspections
         public override string Meta { get { return InspectionsUI.ProcedureNotUsedInspectionMeta; } }
         public override string Description { get { return InspectionsUI.ProcedureNotUsedInspectionName; } }
         public override CodeInspectionType InspectionType { get { return CodeInspectionType.CodeQualityIssues; } }
+
+        private static readonly string[] DocumentEventHandlerPrefixes =
+        {
+            "Chart_",
+            "Worksheet_",
+            "Workbook_",
+            "Document_",
+            "Application_",
+            "Session_",
+        };
 
         public override IEnumerable<InspectionResultBase> GetInspectionResults()
         {
@@ -34,7 +46,7 @@ namespace Rubberduck.Inspections
             handlers.AddRange(withEventFields.SelectMany(field => declarations.FindEventProcedures(field)));
 
             var forms = declarations.Where(item => item.DeclarationType == DeclarationType.ClassModule
-                        && item.QualifiedName.QualifiedModuleName.Component.Type == vbext_ComponentType.vbext_ct_MSForm)
+                        && item.QualifiedName.QualifiedModuleName.Component.Type == ComponentType.UserForm)
                 .ToList();
 
             if (forms.Any())
@@ -49,7 +61,8 @@ namespace Rubberduck.Inspections
                             && !IsInspectionDisabled(item, AnnotationName)).ToList();
             var issues = items.Select(issue => new IdentifierNotUsedInspectionResult(this, issue, issue.Context, issue.QualifiedName.QualifiedModuleName));
 
-            issues = DocumentNames.DocumentEventHandlerPrefixes.Aggregate(issues, (current, item) => current.Where(issue => !issue.Description.Contains("'" + item)));
+            issues = DocumentEventHandlerPrefixes
+                .Aggregate(issues, (current, item) => current.Where(issue => !issue.Description.Contains("'" + item)));
 
             return issues.ToList();
         }
@@ -64,7 +77,7 @@ namespace Rubberduck.Inspections
         {
             var enumerable = classes as IList<Declaration> ?? classes.ToList();
             var result = !ProcedureTypes.Contains(declaration.DeclarationType)
-                || declaration.References.Any(r => !r.IsAssignment)
+                || declaration.References.Any(r => !r.IsAssignment && !r.ParentScoping.Equals(declaration)) // recursive calls don't count
                 || handlers.Contains(declaration)
                 || IsPublicModuleMember(modules, declaration)
                 || IsClassLifeCycleHandler(enumerable, declaration)

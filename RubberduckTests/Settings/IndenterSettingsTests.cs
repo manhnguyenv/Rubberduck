@@ -17,6 +17,7 @@ namespace RubberduckTests.Settings
         private const bool DefaultAlignContinuations = true;
         private const bool DefaultIgnoreOperatorsInContinuations = true;
         private const bool DefaultIndentCase = false;
+        private const bool DefaultIndentEnumTypeAsProcedure = false;
         private const bool DefaultForceDebugStatementsInColumn1 = false;
         private const bool DefaultForceCompilerDirectivesInColumn1 = false;
         private const bool DefaultIndentCompilerDirectives = true;
@@ -36,6 +37,7 @@ namespace RubberduckTests.Settings
         private const bool NondefaultAlignContinuations = false;
         private const bool NondefaultIgnoreOperatorsInContinuations = false;
         private const bool NondefaultIndentCase = true;
+        private const bool NondefaultIndentEnumTypeAsProcedure = true;
         private const bool NondefaultForceDebugStatementsInColumn1 = true;
         private const bool NondefaultForceCompilerDirectivesInColumn1 = true;
         private const bool NondefaultIndentCompilerDirectives = false;
@@ -58,12 +60,12 @@ namespace RubberduckTests.Settings
             output.SetupProperty(s => s.AlignContinuations);
             output.SetupProperty(s => s.IgnoreOperatorsInContinuations);
             output.SetupProperty(s => s.IndentCase);
+            output.SetupProperty(s => s.IndentEnumTypeAsProcedure);
             output.SetupProperty(s => s.ForceDebugStatementsInColumn1);
             output.SetupProperty(s => s.ForceCompilerDirectivesInColumn1);
             output.SetupProperty(s => s.IndentCompilerDirectives);
             output.SetupProperty(s => s.AlignDims);
             output.SetupProperty(s => s.AlignDimColumn);
-            output.SetupProperty(s => s.EnableUndo);
             output.SetupProperty(s => s.EndOfLineCommentStyle);
             output.SetupProperty(s => s.EndOfLineCommentColumnSpaceAlignment);
             output.SetupProperty(s => s.IndentSpaces);
@@ -75,12 +77,12 @@ namespace RubberduckTests.Settings
             output.Object.AlignContinuations = nondefault ? NondefaultAlignContinuations : DefaultAlignContinuations;
             output.Object.IgnoreOperatorsInContinuations = nondefault ? NondefaultIgnoreOperatorsInContinuations : DefaultIgnoreOperatorsInContinuations;
             output.Object.IndentCase = nondefault ? NondefaultIndentCase : DefaultIndentCase;
+            output.Object.IndentEnumTypeAsProcedure = nondefault ? NondefaultIndentEnumTypeAsProcedure : DefaultIndentEnumTypeAsProcedure;
             output.Object.ForceDebugStatementsInColumn1 = nondefault ? NondefaultForceDebugStatementsInColumn1 : DefaultForceDebugStatementsInColumn1;
             output.Object.ForceCompilerDirectivesInColumn1 = nondefault ? NondefaultForceCompilerDirectivesInColumn1 : DefaultForceCompilerDirectivesInColumn1;
             output.Object.IndentCompilerDirectives = nondefault ? NondefaultIndentCompilerDirectives : DefaultIndentCompilerDirectives;
             output.Object.AlignDims = nondefault ? NondefaultAlignDims : DefaultAlignDims;
             output.Object.AlignDimColumn = nondefault ? NondefaultAlignDimColumn : DefaultAlignDimColumn;
-            output.Object.EnableUndo = nondefault ? NondefaultEnableUndo : DefaultEnableUndo;
             output.Object.EndOfLineCommentStyle = nondefault ? NondefaultEndOfLineCommentStyle : DefaultEndOfLineCommentStyle;
             output.Object.EndOfLineCommentColumnSpaceAlignment = nondefault ? NondefaultEndOfLineCommentColumnSpaceAlignment : DefaultEndOfLineCommentColumnSpaceAlignment;
             output.Object.IndentSpaces = nondefault ? NondefaultIndentSpaces : DefaultIndentSpaces;
@@ -90,13 +92,13 @@ namespace RubberduckTests.Settings
 
         private Configuration GetDefaultConfig()
         {
-            var userSettings = new UserSettings(null, null, null, null, null, GetMockIndenterSettings());
+            var userSettings = new UserSettings(null, null, null, null, null, GetMockIndenterSettings(), null);
             return new Configuration(userSettings);
         }
 
         private Configuration GetNondefaultConfig()
         {
-            var userSettings = new UserSettings(null, null, null, null, null, GetMockIndenterSettings(true));
+            var userSettings = new UserSettings(null, null, null, null, null, GetMockIndenterSettings(true), null);
             return new Configuration(userSettings);
         }
 
@@ -114,13 +116,13 @@ namespace RubberduckTests.Settings
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.AlignContinuations, viewModel.AlignContinuations),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.AlignDimColumn, viewModel.AlignDimColumn),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.AlignDims, viewModel.AlignDims),
-                () => Assert.AreEqual(config.UserSettings.IndenterSettings.EnableUndo, viewModel.EnableUndo),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.EndOfLineCommentColumnSpaceAlignment, viewModel.EndOfLineCommentColumnSpaceAlignment),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.EndOfLineCommentStyle, viewModel.EndOfLineCommentStyle),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.ForceCompilerDirectivesInColumn1, viewModel.ForceCompilerDirectivesInColumn1),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.ForceDebugStatementsInColumn1, viewModel.ForceDebugStatementsInColumn1),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.IgnoreOperatorsInContinuations, viewModel.IgnoreOperatorsInContinuations),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.IndentCase, viewModel.IndentCase),
+                () => Assert.AreEqual(config.UserSettings.IndenterSettings.IndentEnumTypeAsProcedure, viewModel.IndentEnumTypeAsProcedure),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.IndentCompilerDirectives, viewModel.IndentCompilerDirectives),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.IndentEntireProcedureBody, viewModel.IndentEntireProcedureBody),
                 () => Assert.AreEqual(config.UserSettings.IndenterSettings.IndentFirstCommentBlock, viewModel.IndentFirstCommentBlock),
@@ -141,13 +143,13 @@ namespace RubberduckTests.Settings
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.AlignContinuations, viewModel.AlignContinuations),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.AlignDimColumn, viewModel.AlignDimColumn),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.AlignDims, viewModel.AlignDims),
-                () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.EnableUndo, viewModel.EnableUndo),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.EndOfLineCommentColumnSpaceAlignment, viewModel.EndOfLineCommentColumnSpaceAlignment),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.EndOfLineCommentStyle, viewModel.EndOfLineCommentStyle),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.ForceCompilerDirectivesInColumn1, viewModel.ForceCompilerDirectivesInColumn1),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.ForceDebugStatementsInColumn1, viewModel.ForceDebugStatementsInColumn1),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IgnoreOperatorsInContinuations, viewModel.IgnoreOperatorsInContinuations),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentCase, viewModel.IndentCase),
+                () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentEnumTypeAsProcedure, viewModel.IndentEnumTypeAsProcedure),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentCompilerDirectives, viewModel.IndentCompilerDirectives),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentEntireProcedureBody, viewModel.IndentEntireProcedureBody),
                 () => Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentFirstCommentBlock, viewModel.IndentFirstCommentBlock),
@@ -189,15 +191,6 @@ namespace RubberduckTests.Settings
             var viewModel = new IndenterSettingsViewModel(defaultConfig);
 
             Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.AlignDims, viewModel.AlignDims);
-        }
-
-        [TestMethod]
-        public void EnableUndoIsSetInCtor()
-        {
-            var defaultConfig = GetDefaultConfig();
-            var viewModel = new IndenterSettingsViewModel(defaultConfig);
-
-            Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.EnableUndo, viewModel.EnableUndo);
         }
 
         [TestMethod]
@@ -252,6 +245,15 @@ namespace RubberduckTests.Settings
             var viewModel = new IndenterSettingsViewModel(defaultConfig);
 
             Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentCase, viewModel.IndentCase);
+        }
+
+        [TestMethod]
+        public void IndentEnumTypeAsProcedureIsSetInCtor()
+        {
+            var defaultConfig = GetDefaultConfig();
+            var viewModel = new IndenterSettingsViewModel(defaultConfig);
+
+            Assert.AreEqual(defaultConfig.UserSettings.IndenterSettings.IndentEnumTypeAsProcedure, viewModel.IndentEnumTypeAsProcedure);
         }
 
         [TestMethod]

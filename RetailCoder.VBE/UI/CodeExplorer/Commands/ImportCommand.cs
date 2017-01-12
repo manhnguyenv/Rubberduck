@@ -1,20 +1,20 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.Vbe.Interop;
 using NLog;
 using Rubberduck.Navigation.CodeExplorer;
 using Rubberduck.UI.Command;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.CodeExplorer.Commands
 {
     [CodeExplorerCommand]
     public class ImportCommand : CommandBase, IDisposable
     {
-        private readonly VBE _vbe;
+        private readonly IVBE _vbe;
         private readonly IOpenFileDialog _openFileDialog;
 
-        public ImportCommand(VBE vbe, IOpenFileDialog openFileDialog) : base(LogManager.GetCurrentClassLogger())
+        public ImportCommand(IVBE vbe, IOpenFileDialog openFileDialog) : base(LogManager.GetCurrentClassLogger())
         {
             _vbe = vbe;
             _openFileDialog = openFileDialog;
@@ -40,7 +40,7 @@ namespace Rubberduck.UI.CodeExplorer.Commands
             {
                 if (_vbe.VBProjects.Count == 1)
                 {
-                    project = _vbe.VBProjects.Item(1);
+                    project = _vbe.VBProjects[1];
                 }
                 else if (_vbe.ActiveVBProject != null)
                 {
@@ -63,7 +63,7 @@ namespace Rubberduck.UI.CodeExplorer.Commands
             }
         }
 
-        private VBProject GetNodeProject(CodeExplorerItemViewModel parameter)
+        private IVBProject GetNodeProject(CodeExplorerItemViewModel parameter)
         {
             if (parameter is ICodeExplorerDeclarationViewModel)
             {

@@ -4,7 +4,6 @@ using Antlr4.Runtime.Tree;
 using Antlr4.Runtime.Tree.Xpath;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rubberduck.Parsing.Grammar;
-using Rubberduck.Parsing.Symbols;
 using System;
 using System.Collections.Generic;
 
@@ -1503,6 +1502,77 @@ End Type
             AssertTree(parseResult.Item1, parseResult.Item2, "//udtMember", matches => matches.Count == 13);
         }
 
+
+        [TestMethod]
+        public void TestNestedParensForLiteralExpression()
+        {
+            //Assert.Inconclusive("See issue #2206");
+            const string code = @"
+Sub Test()
+    Dim foo As Integer
+    foo = ((42) + ((12)))
+End Sub
+";
+            var parseResult = Parse(code);
+            AssertTree(parseResult.Item1, parseResult.Item2, "//literalExpression", matches => matches.Count == 2);
+        }
+        
+        [TestMethod]
+        public void TestParensForByValSingleArg()
+        {
+            //Assert.Inconclusive("See issue #2206");
+            const string code = @"
+Sub Test()
+    DoSomething (foo)
+End Sub
+";
+            var parseResult = Parse(code);
+            AssertTree(parseResult.Item1, parseResult.Item2, "//argumentExpression", matches => matches.Count == 1);
+        }
+
+        [TestMethod]
+        public void TestParensForByValFirstArg()
+        {
+            Assert.Inconclusive("See issue #2206");
+            const string code = @"
+Sub Test()
+    DoSomething (foo), bar
+End Sub
+";
+            var parseResult = Parse(code);
+            AssertTree(parseResult.Item1, parseResult.Item2, "//argumentExpression", matches => matches.Count == 2);
+        }
+
+        [TestMethod]
+        public void TestCaseIsEqExpressionWithLiteral()
+        {
+            const string code = @"
+Sub Test(ByVal foo As Integer)
+    Select Case foo
+        Case Is = 42
+            Exit Sub
+    End Select
+End Sub
+";
+            var parseResult = Parse(code);
+            AssertTree(parseResult.Item1, parseResult.Item2, "//rangeClause", matches => matches.Count == 1);
+        }
+
+        [TestMethod]
+        public void TestCaseIsEqExpressionWithEnum()
+        {
+            const string code = @"
+Sub Test(ByVal foo As vbext_ComponentType)
+    Select Case foo
+        Case Is = vbext_ct_StdModule
+            Exit Sub
+    End Select
+End Sub
+";
+            var parseResult = Parse(code);
+            AssertTree(parseResult.Item1, parseResult.Item2, "//rangeClause", matches => matches.Count == 1);
+        }
+
         private Tuple<VBAParser, ParserRuleContext> Parse(string code)
         {
             var stream = new AntlrInputStream(code);
@@ -1510,7 +1580,8 @@ End Type
             var tokens = new CommonTokenStream(lexer);
             var parser = new VBAParser(tokens);
             // Don't remove this line otherwise we won't get notified of parser failures.
-            parser.AddErrorListener(new ExceptionErrorListener());
+            parser.ErrorHandler = new BailErrorStrategy();
+            //parser.AddErrorListener(new ExceptionErrorListener());
             // If SLL fails we want to get notified ASAP so we can fix it, that's why we don't retry using LL.
             parser.Interpreter.PredictionMode = PredictionMode.Sll;
             var tree = parser.startRule();

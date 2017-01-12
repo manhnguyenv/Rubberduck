@@ -244,6 +244,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\LibGit2Sharp.0.22.0-pre20150516171636\lib\net40\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VB6.Interop.VBIDE">
+      <HintPath>..\libs\Microsoft.VB6.Interop.VBIDE.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Vbe.Interop.Forms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\libs\Microsoft.Vbe.Interop.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ninject.Extensions.Conventions">
       <HintPath>..\packages\ninject.extensions.conventions.3.2.0.0\lib\net45-full\Ninject.Extensions.Conventions.dll</HintPath>
     </Reference>
@@ -258,6 +268,10 @@
       <HintPath>..\packages\Ninject.Extensions.Interception.DynamicProxy.3.2.0.0\lib\net45-full\Ninject.Extensions.Interception.DynamicProxy.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ninject.Extensions.NamedScope, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.NamedScope.3.2.0.0\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationFramework.Aero" />
@@ -270,6 +284,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
@@ -302,12 +317,6 @@
     <Compile Include="Common\ExportFormatter.cs" />
     <Compile Include="Common\ClipboardWriter.cs" />
     <Compile Include="Common\DeclarationExtensions.cs" />
-    <Compile Include="Common\Dispatch\DispatcherEventArgs.cs" />
-    <Compile Include="Common\Dispatch\DispatcherRenamedEventArgs.cs" />
-    <Compile Include="Common\Dispatch\ReferencesEventsSink.cs" />
-    <Compile Include="Common\Dispatch\VBComponentsEventsSink.cs" />
-    <Compile Include="Common\Dispatch\VBProjectsEventsSink.cs" />
-    <Compile Include="Common\Dispatch\VBProjectsEventsWrapper.cs" />
     <Compile Include="Common\HookEventArgs.cs" />
     <Compile Include="Common\Hotkeys\HotkeyInfo.cs" />
     <Compile Include="Common\Hotkeys\Hotkey.cs" />
@@ -317,6 +326,7 @@
     <Compile Include="Common\IRubberduckHooks.cs" />
     <Compile Include="Common\LogLevelHelper.cs" />
     <Compile Include="Common\ModuleExporter.cs" />
+    <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Common\WinAPI\IRawDevice.cs" />
     <Compile Include="Common\WinAPI\KeyMap.cs" />
     <Compile Include="Common\WinAPI\RawKeyEventArgs.cs" />
@@ -359,31 +369,67 @@
     <Compile Include="Common\WinAPI\WindowLongFlags.cs" />
     <Compile Include="Common\WinAPI\WM.cs" />
     <Compile Include="Common\WindowsOperatingSystem.cs" />
-    <Compile Include="Inspections\InspectionsUI.de.Designer.cs">
+    <Compile Include="Common\UndocumentedAttribute.cs" />
+    <Compile Include="Inspections\ImplicitDefaultMemberAssignmentInspection.cs" />
+    <Compile Include="Inspections\Resources\InspectionsUI.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InspectionsUI.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Inspections\Results\AggregateInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ImplicitDefaultMemberAssignmentInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\IntroduceLocalVariableQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\OptionExplicitQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveCommentQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RenameDeclarationQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveUnusedParameterQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\ReplaceGlobalModifierQuickFix.cs" />
+    <Compile Include="Inspections\Results\ObjectVariableNotSetInspectionResult.cs" />
+    <Compile Include="Inspections\Results\MultipleFolderAnnotationsInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\MoveFieldCloserToUsageQuickFix.cs" />
+    <Compile Include="Inspections\Results\MissingAnnotationArgumentInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ImplicitActiveWorkbookReferenceInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\EncapsulateFieldQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\ChangeDimToPrivateQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\DeclareAsExplicitVariantQuickFix.cs" />
+    <Compile Include="Inspections\Results\ImplicitActiveSheetReferenceInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\ChangeParameterByRefByValQuickFix.cs" />
+    <Compile Include="Inspections\Resources\InspectionsUI.de.Designer.cs">
       <DependentUpon>InspectionsUI.de.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Inspections\InspectionsUI.fr.Designer.cs">
+    <Compile Include="Inspections\Resources\InspectionsUI.fr.Designer.cs">
       <DependentUpon>InspectionsUI.fr.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Inspections\InspectionsUI.sv.Designer.cs">
-      <DependentUpon>InspectionsUI.sv.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Inspections\InspectionsUI.ja.Designer.cs">
-      <DependentUpon>InspectionsUI.ja.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Inspections\IParseTreeInspection.cs" />
-    <Compile Include="Inspections\MakeSingleLineParameterQuickFix.cs" />
-    <Compile Include="Inspections\MalformedAnnotationInspection.cs" />
+    <Compile Include="Inspections\Abstract\IParseTreeInspection.cs" />
+    <Compile Include="Inspections\QuickFixes\MakeSingleLineParameterQuickFix.cs" />
+    <Compile Include="Inspections\MissingAnnotationArgumentInspection.cs" />
+    <Compile Include="Inspections\ModuleScopeDimKeywordInspection.cs" />
+    <Compile Include="Inspections\Results\ModuleScopeDimKeywordInspectionResult.cs" />
     <Compile Include="Inspections\ObjectVariableNotSetInspection.cs" />
-    <Compile Include="Inspections\RemoveExplicitCallStatmentQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\PassParameterByValueQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveExplicitCallStatmentQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveExplicitLetStatementQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveTypeHintsQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveUnassignedVariableUsageQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RenameProjectQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RepaceEmptyStringLiteralStatementQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\ReplaceObsoleteCommentMarkerQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveUnassignedIdentifierQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\SetExplicitVariantReturnTypeQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\SplitMultipleDeclarationsQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\RemoveUnusedDeclarationQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\PassParameterByReferenceQuickFix.cs" />
+    <Compile Include="Inspections\UndeclaredVariableInspection.cs" />
+    <Compile Include="Inspections\Results\UndeclaredVariableInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\UntypedFunctionUsageQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\UseSetKeywordForObjectAssignmentQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\SpecifyExplicitPublicModifierQuickFix.cs" />
+    <Compile Include="Inspections\QuickFixes\WriteOnlyPropertyQuickFix.cs" />
+    <Compile Include="Inspections\Results\WriteOnlyPropertyInspectionResult.cs" />
     <Compile Include="Navigation\CodeExplorer\ICodeExplorerDeclarationViewModel.cs" />
     <Compile Include="Navigation\Folders\FolderHelper.cs" />
     <Compile Include="Refactorings\ExtractMethod\ExtractedMethod.cs" />
@@ -409,7 +455,9 @@
     <Compile Include="Settings\RubberduckHotkey.cs" />
     <Compile Include="Settings\ToDoListConfigProvider.cs" />
     <Compile Include="Settings\UnitTestConfigProvider.cs" />
-    <Compile Include="Sinks.cs" />
+    <Compile Include="Settings\WhitelistedIdentifierSetting.cs" />
+    <Compile Include="Settings\WindowConfigProvider.cs" />
+    <Compile Include="Settings\WindowSettings.cs" />
     <Compile Include="UI\About\AboutControl.xaml.cs">
       <DependentUpon>AboutControl.xaml</DependentUpon>
     </Compile>
@@ -438,6 +486,16 @@
     <Compile Include="UI\CodeExplorer\Commands\AddClassModuleCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\AddStdModuleCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\AddTestModuleCommand.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\AppCommandBarBase.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\ContextSelectionLabelMenuItem.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\IContextFormatter.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\ReparseCommandMenuItem.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\RubberduckCommandBar.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\SerializeDeclarationsCommandMenuItem.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\ShowParserErrorsCommandMenuItem.cs" />
+    <Compile Include="UI\Command\MenuItems\ParentMenus\CommandBarButtonFactory.cs" />
+    <Compile Include="UI\Command\MenuItems\ParentMenus\CommandBarPopupFactory.cs" />
+    <Compile Include="UI\Command\MenuItems\CommandBars\IAppCommandBar.cs" />
     <Compile Include="UI\Command\MenuItems\ReferenceBrowserCommandMenuItem.cs" />
     <Compile Include="UI\Command\MenuItems\RegexAssistantCommand.cs" />
     <Compile Include="UI\Command\MenuItems\RegexAssistantCommandMenuItem.cs" />
@@ -468,41 +526,36 @@
     <Compile Include="UI\Controls\NumberPicker.xaml.cs">
       <DependentUpon>NumberPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Inspections\CodeInspectionQuickFix.cs" />
-    <Compile Include="Inspections\CompositeCodeInspectionFix.cs" />
-    <Compile Include="Inspections\ConvertToProcedureQuickFix.cs" />
+    <Compile Include="Inspections\Abstract\QuickFixBase.cs" />
+    <Compile Include="Inspections\QuickFixes\CompositeCodeInspectionFix.cs" />
+    <Compile Include="Inspections\QuickFixes\ConvertToProcedureQuickFix.cs" />
     <Compile Include="Inspections\FunctionReturnValueNotUsedInspection.cs" />
-    <Compile Include="Inspections\FunctionReturnValueNotUsedInspectionResult.cs" />
-    <Compile Include="Inspections\IInspection.cs" />
-    <Compile Include="Inspections\IInspectionModel.cs" />
-    <Compile Include="Inspections\InspectionsUI.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InspectionsUI.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Inspections\Results\FunctionReturnValueNotUsedInspectionResult.cs" />
+    <Compile Include="Inspections\Abstract\IInspection.cs" />
+    <Compile Include="Inspections\Abstract\IInspectionModel.cs" />
     <Compile Include="Inspections\SelfAssignedDeclarationInspection.cs" />
-    <Compile Include="Inspections\SelfAssignedDeclarationInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\SelfAssignedDeclarationInspectionResult.cs" />
     <Compile Include="Inspections\MoveFieldCloserToUsageInspection.cs" />
     <Compile Include="Inspections\EncapsulatePublicFieldInspection.cs" />
-    <Compile Include="Inspections\MoveFieldCloserToUsageInspectionResult.cs" />
-    <Compile Include="Inspections\EncapsulatePublicFieldInspectionResult.cs" />
+    <Compile Include="Inspections\Results\MoveFieldCloserToUsageInspectionResult.cs" />
+    <Compile Include="Inspections\Results\EncapsulatePublicFieldInspectionResult.cs" />
     <Compile Include="Inspections\EmptyStringLiteralInspection.cs" />
-    <Compile Include="Inspections\EmptyStringLiteralInspectionResult.cs" />
-    <Compile Include="Inspections\IgnoreOnceQuickFix.cs" />
+    <Compile Include="Inspections\Results\EmptyStringLiteralInspectionResult.cs" />
+    <Compile Include="Inspections\QuickFixes\IgnoreOnceQuickFix.cs" />
     <Compile Include="Inspections\ImplicitActiveSheetReferenceInspection.cs" />
     <Compile Include="Inspections\ImplicitActiveWorkbookReferenceInspection.cs" />
-    <Compile Include="Inspections\InspectionBase.cs" />
+    <Compile Include="Inspections\Abstract\InspectionBase.cs" />
     <Compile Include="Inspections\MultipleFolderAnnotationsInspection.cs" />
     <Compile Include="Inspections\ProcedureCanBeWrittenAsFunctionInspection.cs" />
-    <Compile Include="Inspections\ProcedureShouldBeFunctionInspectionResult.cs" />
-    <Compile Include="Inspections\UntypedFunctionUsageInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ProcedureCanBeWrittenAsFunctionInspectionResult.cs" />
+    <Compile Include="Inspections\Results\UntypedFunctionUsageInspectionResult.cs" />
     <Compile Include="Inspections\UseMeaningfulNameInspection.cs" />
-    <Compile Include="Inspections\UseMeaningfulNameInspectionResult.cs" />
+    <Compile Include="Inspections\Results\UseMeaningfulNameInspectionResult.cs" />
     <Compile Include="Inspections\WriteOnlyPropertyInspection.cs" />
     <Compile Include="Inspections\UntypedFunctionUsageInspection.cs" />
     <Compile Include="Navigation\CodeExplorer\CodeExplorerCustomFolderViewModel.cs" />
     <Compile Include="Navigation\CodeExplorer\CodeExplorerItemViewModel.cs" />
-    <Compile Include="Inspections\MultilineParameterInspectionResult.cs" />
+    <Compile Include="Inspections\Results\MultilineParameterInspectionResult.cs" />
     <Compile Include="Navigation\RegexSearchReplace\IRegexSearchReplace.cs" />
     <Compile Include="Navigation\RegexSearchReplace\IRegexSearchReplaceDialog.cs" />
     <Compile Include="Navigation\RegexSearchReplace\RegexSearchReplace.cs" />
@@ -544,39 +597,39 @@
     <Compile Include="Settings\HotkeySetting.cs" />
     <Compile Include="Settings\UnitTestSettings.cs" />
     <Compile Include="Inspections\AssignedByValParameterInspection.cs" />
-    <Compile Include="Inspections\AssignedByValParameterInspectionResult.cs" />
+    <Compile Include="Inspections\Results\AssignedByValParameterInspectionResult.cs" />
     <Compile Include="Inspections\ConstantNotUsedInspection.cs" />
     <Compile Include="Inspections\DefaultProjectNameInspection.cs" />
-    <Compile Include="Inspections\DefaultProjectNameInspectionResult.cs" />
-    <Compile Include="Inspections\ICodeInspectionResult.cs" />
-    <Compile Include="Inspections\IInspector.cs" />
+    <Compile Include="Inspections\Results\DefaultProjectNameInspectionResult.cs" />
+    <Compile Include="Inspections\Abstract\IInspectionResult.cs" />
+    <Compile Include="Inspections\Abstract\IInspector.cs" />
     <Compile Include="Inspections\ImplicitPublicMemberInspection.cs" />
-    <Compile Include="Inspections\ImplicitPublicMemberInspectionResult.cs" />
-    <Compile Include="Inspections\Inspector.cs" />
+    <Compile Include="Inspections\Results\ImplicitPublicMemberInspectionResult.cs" />
+    <Compile Include="Inspections\Concrete\Inspector.cs" />
     <Compile Include="Inspections\MultilineParameterInspection.cs" />
     <Compile Include="Inspections\NonReturningFunctionInspection.cs" />
-    <Compile Include="Inspections\NonReturningFunctionInspectionResult.cs" />
+    <Compile Include="Inspections\Results\NonReturningFunctionInspectionResult.cs" />
     <Compile Include="Inspections\ObsoleteCallStatementInspection.cs" />
-    <Compile Include="Inspections\ObsoleteCallStatementUsageInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ObsoleteCallStatementUsageInspectionResult.cs" />
     <Compile Include="Inspections\ObsoleteGlobalInspection.cs" />
-    <Compile Include="Inspections\ObsoleteGlobalInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ObsoleteGlobalInspectionResult.cs" />
     <Compile Include="Inspections\ObsoleteLetStatementInspection.cs" />
-    <Compile Include="Inspections\ObsoleteLetStatementUsageInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ObsoleteLetStatementUsageInspectionResult.cs" />
     <Compile Include="Inspections\ObsoleteTypeHintInspection.cs" />
-    <Compile Include="Inspections\ObsoleteTypeHintInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ObsoleteTypeHintInspectionResult.cs" />
     <Compile Include="Inspections\OptionBaseInspection.cs" />
-    <Compile Include="Inspections\OptionBaseInspectionResult.cs" />
+    <Compile Include="Inspections\Results\OptionBaseInspectionResult.cs" />
     <Compile Include="Inspections\ParameterCanBeByValInspection.cs" />
-    <Compile Include="Inspections\ParameterCanBeByValInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ParameterCanBeByValInspectionResult.cs" />
     <Compile Include="Inspections\ParameterNotUsedInspection.cs" />
-    <Compile Include="Inspections\ParameterNotUsedInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ParameterNotUsedInspectionResult.cs" />
     <Compile Include="Inspections\ProcedureNotUsedInspection.cs" />
     <Compile Include="Inspections\UnassignedVariableUsageInspection.cs" />
-    <Compile Include="Inspections\UnassignedVariableUsageInspectionResult.cs" />
+    <Compile Include="Inspections\Results\UnassignedVariableUsageInspectionResult.cs" />
     <Compile Include="Inspections\VariableNotUsedInspection.cs" />
-    <Compile Include="Inspections\IdentifierNotUsedInspectionResult.cs" />
+    <Compile Include="Inspections\Results\IdentifierNotUsedInspectionResult.cs" />
     <Compile Include="Inspections\VariableNotAssignedInspection.cs" />
-    <Compile Include="Inspections\IdentifierNotAssignedInspectionResult.cs" />
+    <Compile Include="Inspections\Results\IdentifierNotAssignedInspectionResult.cs" />
     <Compile Include="UI\Controls\BusyIndicator.xaml.cs">
       <DependentUpon>BusyIndicator.xaml</DependentUpon>
     </Compile>
@@ -630,7 +683,6 @@
     <Compile Include="UI\Command\FindAllReferencesCommand.cs" />
     <Compile Include="UI\Command\MenuItems\ParentMenus\NavigateParentMenu.cs" />
     <Compile Include="UI\Command\MenuItems\ParentMenus\SmartIndenterParentMenu.cs" />
-    <Compile Include="UI\Command\MenuItems\RubberduckCommandBar.cs" />
     <Compile Include="UI\Command\MenuItems\RefactorEncapsulateFieldCommandMenuItem.cs" />
     <Compile Include="UI\Command\MenuItems\RefactorImplementInterfaceCommandMenuItem.cs" />
     <Compile Include="UI\Command\MenuItems\RefactorExtractInterfaceCommandMenuItem.cs" />
@@ -740,16 +792,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RubberduckUI.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\RubberduckUI.ja.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RubberduckUI.ja.resx</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RubberduckUI.sv.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RubberduckUI.sv.resx</DependentUpon>
-    </Compile>
     <Compile Include="UI\Settings\Converters\HotkeyDisplayConverter.cs" />
     <Compile Include="UI\Settings\Converters\AssertModeValueToTextConverter.cs" />
     <Compile Include="UI\Settings\Converters\DelimiterToTextConverter.cs" />
@@ -788,6 +830,7 @@
     </Compile>
     <Compile Include="UI\Settings\SettingsControlViewModel.cs" />
     <Compile Include="UI\Settings\SettingsView.cs" />
+    <Compile Include="UI\Settings\SettingsViewModelBase.cs" />
     <Compile Include="UI\Settings\SettingsViews.cs" />
     <Compile Include="UI\Settings\Converters\SettingsViewToPageConverter.cs" />
     <Compile Include="UI\Settings\TodoSettings.xaml.cs">
@@ -830,6 +873,10 @@
     <Compile Include="UI\IdentifierReferences\ListItemActionEventArgs.cs" />
     <Compile Include="UI\ParserErrors\ParserErrorsPresenter.cs" />
     <Compile Include="Refactorings\ExtractMethod\ExtractMethodModel.cs" />
+    <Compile Include="UI\Settings\WindowSettings.xaml.cs">
+      <DependentUpon>WindowSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Settings\WindowSettingsViewModel.cs" />
     <Compile Include="UI\SimpleListControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -914,26 +961,31 @@
       <DependentUpon>UnsyncedCommitsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\SourceControl\UnsyncedCommitsViewViewModel.cs" />
-    <Compile Include="UI\ToDoItems\IToDoExplorerWindow.cs" />
+    <Compile Include="UI\Splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Splash.Designer.cs">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\IConfigurationService.cs" />
     <Compile Include="Settings\ConfigurationLoader.cs" />
     <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Settings\CodeInspectionSettings.cs" />
-    <Compile Include="Inspections\InspectionResultBase.cs" />
-    <Compile Include="Inspections\CodeInspectionSeverity.cs" />
-    <Compile Include="Inspections\CodeInspectionType.cs" />
+    <Compile Include="Inspections\Abstract\InspectionResultBase.cs" />
+    <Compile Include="Inspections\Resources\CodeInspectionSeverity.cs" />
+    <Compile Include="Inspections\Resources\CodeInspectionType.cs" />
     <Compile Include="Inspections\ImplicitByRefParameterInspection.cs" />
-    <Compile Include="Inspections\ImplicitByRefParameterInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ImplicitByRefParameterInspectionResult.cs" />
     <Compile Include="Inspections\ImplicitVariantReturnTypeInspection.cs" />
-    <Compile Include="Inspections\ImplicitVariantReturnTypeInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ImplicitVariantReturnTypeInspectionResult.cs" />
     <Compile Include="Inspections\MultipleDeclarationsInspection.cs" />
-    <Compile Include="Inspections\MultipleDeclarationsInspectionResult.cs" />
+    <Compile Include="Inspections\Results\MultipleDeclarationsInspectionResult.cs" />
     <Compile Include="Inspections\ObsoleteCommentSyntaxInspection.cs" />
-    <Compile Include="Inspections\ObsoleteCommentSyntaxInspectionResult.cs" />
+    <Compile Include="Inspections\Results\ObsoleteCommentSyntaxInspectionResult.cs" />
     <Compile Include="Inspections\OptionExplicitInspection.cs" />
-    <Compile Include="Inspections\OptionExplicitInspectionResult.cs" />
+    <Compile Include="Inspections\Results\OptionExplicitInspectionResult.cs" />
     <Compile Include="Inspections\VariableTypeNotDeclaredInspection.cs" />
-    <Compile Include="Inspections\VariableTypeNotDeclaredInspectionResult.cs" />
+    <Compile Include="Inspections\Results\VariableTypeNotDeclaredInspectionResult.cs" />
     <Compile Include="App.cs" />
     <Compile Include="UI\CodeExplorer\CodeExplorerDockablePresenter.cs" />
     <Compile Include="UI\CodeExplorer\CodeExplorerWindow.cs">
@@ -998,8 +1050,6 @@
     <Compile Include="UnitTesting\IAssert.cs" />
     <Compile Include="UnitTesting\ITestEngine.cs" />
     <Compile Include="UnitTesting\ITestRunner.cs" />
-    <Compile Include="UnitTesting\NewTestMethodCommand.cs" />
-    <Compile Include="UnitTesting\NewUnitTestModuleCommand.cs" />
     <Compile Include="UnitTesting\ProjectTestExtensions.cs" />
     <Compile Include="UnitTesting\TestEngine.cs" />
     <Compile Include="UnitTesting\TestMethod.cs" />
@@ -1014,29 +1064,19 @@
     <Compile Include="UI\Command\Refactorings\RefactorRemoveParametersCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Inspections\InspectionsUI.resx">
+    <EmbeddedResource Include="Inspections\Resources\InspectionsUI.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>InspectionsUI.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>InspectionsUI.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Inspections\InspectionsUI.de.resx">
+    <EmbeddedResource Include="Inspections\Resources\InspectionsUI.de.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>InspectionsUI.de.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Inspections\InspectionsUI.fr.resx">
+    <EmbeddedResource Include="Inspections\Resources\InspectionsUI.fr.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>InspectionsUI.fr.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Inspections\InspectionsUI.sv.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>InspectionsUI.sv.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Inspections\InspectionsUI.ja.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>InspectionsUI.ja.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\About\AboutDialog.resx">
@@ -1081,16 +1121,6 @@
       <LastGenOutput>RubberduckUI.de.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\RubberduckUI.ja.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>RubberduckUI.ja.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\RubberduckUI.sv.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>RubberduckUI.sv.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Settings\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1125,6 +1155,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\SourceControl\SourceControlPanel.resx">
       <DependentUpon>SourceControlPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Splash.resx">
+      <DependentUpon>Splash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ToDoItems\ToDoExplorerWindow.resx">
       <DependentUpon>ToDoExplorerWindow.cs</DependentUpon>
@@ -1324,6 +1357,7 @@
     <Resource Include="Resources\Custom\PNG\Task.png" />
     <Resource Include="Resources\Custom\PNG\TestManager.png" />
     <Resource Include="Resources\Custom\PNG\TestMethod.png" />
+    <None Include="Resources\circle_mask.bmp" />
     <Content Include="Resources\Custom\attribution.txt" />
     <Content Include="Resources\Custom\cc_license.txt" />
     <Content Include="Resources\Custom\Mask\AddPropertyMask.bmp" />
@@ -1344,6 +1378,9 @@
     <Resource Include="Resources\Custom\PNG\CollapseUp.png" />
     <Resource Include="Resources\Custom\PNG\ObjectLibrary.png" />
     <Content Include="Resources\Custom\mit_license.txt" />
+    <Resource Include="Resources\folder-open.png" />
+    <Resource Include="Resources\folder.png" />
+    <None Include="Resources\RD-300x250-base.png" />
     <Content Include="Resources\Rubberduck\RD-AboutWindow.png" />
     <Content Include="Resources\Rubberduck\RD-InstallBanner.bmp" />
     <Content Include="Resources\Rubberduck\RD-InstallWindow.bmp" />
@@ -1491,6 +1528,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Settings\WindowSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\SourceControl\BranchesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1531,10 +1572,12 @@
   </Target>
   <Import Project="..\packages\Antlr4.4.3.0\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.3.0\build\Antlr4.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>eventcreate /ID 1 /L APPLICATION /T INFORMATION  /SO "Rubberduck-VBA" /D "Successfully deployed Rubberduck from Visual Studio Build"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>eventcreate /ID 1 /L APPLICATION /T INFORMATION  /SO "Rubberduck-VBA" /D "Deploying Rubberduck from Visual Studio Build"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

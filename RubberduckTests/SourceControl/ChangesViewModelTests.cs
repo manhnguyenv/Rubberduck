@@ -12,6 +12,7 @@ namespace RubberduckTests.SourceControl
     public class ChangesViewModelTests
     {
         private Mock<ISourceControlProvider> _provider;
+        private readonly object _locker = new object();
 
         [TestInitialize]
         public void SetupMocks()
@@ -80,13 +81,12 @@ namespace RubberduckTests.SourceControl
             };
 
             var errorThrown = bool.FalseString; // need a reference type
-
             vm.ErrorThrown += (sender, e) =>
             {
-                lock (errorThrown)
+                lock (_locker)
                 {
                     MultiAssert.Aggregate(
-                        () => Assert.AreEqual(e.Message, Rubberduck.UI.RubberduckUI.SourceControl_CommitStatus),
+                        () => Assert.AreEqual(e.Title, Rubberduck.UI.RubberduckUI.SourceControl_CommitStatus),
                         () =>
                             Assert.AreEqual(e.InnerMessage,
                                 Rubberduck.UI.RubberduckUI.SourceControl_CommitStatus_CommitSuccess),
@@ -100,7 +100,7 @@ namespace RubberduckTests.SourceControl
             vm.CommitCommand.Execute(null);
 
             //assert
-            lock (errorThrown)
+            lock (_locker)
             {
                 Assert.IsTrue(bool.Parse(errorThrown));
             }

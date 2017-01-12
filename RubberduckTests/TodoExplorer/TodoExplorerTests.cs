@@ -1,15 +1,15 @@
-﻿using Microsoft.Vbe.Interop;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Linq;
 using System.Threading;
 using Rubberduck.Parsing.VBA;
 using Rubberduck.Settings;
 using Rubberduck.UI.ToDoItems;
-using Rubberduck.VBEditor.VBEHost;
 using RubberduckTests.Mocks;
 using Rubberduck.Common;
-using Rubberduck.Parsing;
+using Rubberduck.VBEditor.Application;
+using Rubberduck.VBEditor.Events;
+using Rubberduck.VBEditor.SafeComWrappers;
 
 namespace RubberduckTests.TodoExplorer
 {
@@ -26,13 +26,13 @@ namespace RubberduckTests.TodoExplorer
 ";
 
             var builder = new MockVbeBuilder();
-            var project = builder.ProjectBuilder("TestProject1", vbext_ProjectProtection.vbext_pp_none)
-                .AddComponent("Module1", vbext_ComponentType.vbext_ct_StdModule, content);
+            var project = builder.ProjectBuilder("TestProject1", ProjectProtection.Unprotected)
+                .AddComponent("Module1", ComponentType.StandardModule, content);
 
             var vbe = builder.AddProject(project.Build()).Build();
             var mockHost = new Mock<IHostApplication>();
             mockHost.SetupAllProperties();
-            var parser = MockParser.Create(vbe.Object, new RubberduckParserState(vbe.Object, new Mock<ISinks>().Object));
+            var parser = MockParser.Create(vbe.Object, new RubberduckParserState(new Mock<ISinks>().Object));
 
             var vm = new ToDoExplorerViewModel(parser.State, GetConfigService(), GetOperatingSystemMock().Object);
 
@@ -55,13 +55,13 @@ namespace RubberduckTests.TodoExplorer
 ";
 
             var builder = new MockVbeBuilder();
-            var project = builder.ProjectBuilder("TestProject1", vbext_ProjectProtection.vbext_pp_none)
-                .AddComponent("Module1", vbext_ComponentType.vbext_ct_StdModule, content);
+            var project = builder.ProjectBuilder("TestProject1", ProjectProtection.Unprotected)
+                .AddComponent("Module1", ComponentType.StandardModule, content);
 
             var vbe = builder.AddProject(project.Build()).Build();
             var mockHost = new Mock<IHostApplication>();
             mockHost.SetupAllProperties();
-            var parser = MockParser.Create(vbe.Object, new RubberduckParserState(vbe.Object, new Mock<ISinks>().Object));
+            var parser = MockParser.Create(vbe.Object, new RubberduckParserState(new Mock<ISinks>().Object));
 
             var vm = new ToDoExplorerViewModel(parser.State, GetConfigService(), GetOperatingSystemMock().Object);
 
@@ -71,6 +71,38 @@ namespace RubberduckTests.TodoExplorer
             var comments = vm.Items.Select(s => s.Type);
 
             Assert.IsTrue(comments.SequenceEqual(new[] { "TODO ", "NOTE ", "BUG ", "BUG " }));
+        }
+
+        [TestMethod]
+        public void RemoveRemovesComment()
+        {
+            var input =
+@"Dim d As Variant  ' bug should be Integer";
+
+            var expected =
+@"Dim d As Variant  ";
+
+            var builder = new MockVbeBuilder();
+            var project = builder.ProjectBuilder("TestProject1", ProjectProtection.Unprotected)
+                .AddComponent("Module1", ComponentType.StandardModule, input)
+                .Build();
+
+            var vbe = builder.AddProject(project).Build();
+            var mockHost = new Mock<IHostApplication>();
+            mockHost.SetupAllProperties();
+            var parser = MockParser.Create(vbe.Object, new RubberduckParserState(new Mock<ISinks>().Object));
+
+            var vm = new ToDoExplorerViewModel(parser.State, GetConfigService(), GetOperatingSystemMock().Object);
+
+            parser.Parse(new CancellationTokenSource());
+            if (parser.State.Status >= ParserState.Error) { Assert.Inconclusive("Parser Error"); }
+
+            vm.SelectedItem = vm.Items.Single();
+            vm.RemoveCommand.Execute(null);
+
+            var module = project.Object.VBComponents[0].CodeModule;
+            Assert.AreEqual(expected, module.Content());
+            Assert.IsFalse(vm.Items.Any());
         }
 
         private IGeneralConfigService GetConfigService()
@@ -93,7 +125,7 @@ namespace RubberduckTests.TodoExplorer
                 }
             };
 
-            var userSettings = new UserSettings(null, null, todoSettings, null, null, null);
+            var userSettings = new UserSettings(null, null, todoSettings, null, null, null, null);
             return new Configuration(userSettings);
         }
 

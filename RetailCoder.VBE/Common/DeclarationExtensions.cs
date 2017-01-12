@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Media.Imaging;
-using Microsoft.Vbe.Interop;
 using Rubberduck.Parsing;
 using Rubberduck.Parsing.Grammar;
 using Rubberduck.Parsing.Symbols;
@@ -12,6 +11,8 @@ using Rubberduck.Parsing.VBA;
 using Rubberduck.Properties;
 using Rubberduck.UI;
 using Rubberduck.VBEditor;
+using Rubberduck.VBEditor.SafeComWrappers;
+
 // ReSharper disable LocalizableElement
 
 namespace Rubberduck.Common
@@ -43,7 +44,7 @@ namespace Rubberduck.Common
                 throw new ArgumentException("Target DeclarationType is not Variable.", "target");
             }
 
-            var statement = GetVariableStmtContext(target);
+            var statement = GetVariableStmtContext(target) ?? target.Context; // undeclared variables don't have a VariableStmtContext
 
             return new Selection(statement.Start.Line, statement.Start.Column,
                     statement.Stop.Line, statement.Stop.Column);
@@ -82,7 +83,7 @@ namespace Rubberduck.Common
             }
 
             var statement = target.Context.Parent.Parent as VBAParser.VariableStmtContext;
-            if (statement == null)
+            if (statement == null && !target.IsUndeclared)
             {
                 throw new MissingMemberException("Statement not found");
             }
@@ -272,7 +273,7 @@ namespace Rubberduck.Common
             var handlers = new List<Declaration>();
             foreach (var @event in userEvents)
             {
-                handlers.AddRange(declarations.FindHandlersForEvent(@event).Select(s => s.Item2));
+                handlers.AddRange(declarationList.FindHandlersForEvent(@event).Select(s => s.Item2));
             }
             
             return handlers;
@@ -295,14 +296,21 @@ namespace Rubberduck.Common
             var classModuleHandlers = declarationList.Where(item =>
                         item.DeclarationType == DeclarationType.Procedure &&
                         item.ParentDeclaration.DeclarationType == DeclarationType.ClassModule &&
-                        (item.IdentifierName == "Class_Initialize" || item.IdentifierName == "Class_Terminate"));
+                        (item.IdentifierName.Equals("Class_Initialize", StringComparison.InvariantCultureIgnoreCase)
+                        || item.IdentifierName.Equals("Class_Terminate", StringComparison.InvariantCultureIgnoreCase)));
+
+            // standard module built-in handlers:
+            var stdModuleHandlers = declarationList.Where(item =>
+                        item.DeclarationType == DeclarationType.Procedure &&
+                        item.ParentDeclaration.DeclarationType == DeclarationType.ProceduralModule &&
+                (item.IdentifierName.Equals("auto_open", StringComparison.InvariantCultureIgnoreCase)
+                || item.IdentifierName.Equals("auto_close", StringComparison.InvariantCultureIgnoreCase)));
 
             var handlers = declarationList.Where(declaration => !declaration.IsBuiltIn
                                                      && declaration.DeclarationType == DeclarationType.Procedure
                                                      && handlerNames.Contains(declaration.IdentifierName)).ToList();
 
-            handlers.AddRange(classModuleHandlers);
-
+            handlers.AddRange(classModuleHandlers.Concat(stdModuleHandlers));
             return handlers;
         }
 
@@ -353,7 +361,7 @@ namespace Rubberduck.Common
 
             var forms = items.Where(item => item.DeclarationType == DeclarationType.ClassModule
                 && item.QualifiedName.QualifiedModuleName.Component != null
-                && item.QualifiedName.QualifiedModuleName.Component.Type == vbext_ComponentType.vbext_ct_MSForm)
+                && item.QualifiedName.QualifiedModuleName.Component.Type == ComponentType.UserForm)
                 .ToList();
 
             var result = new List<Declaration>();
@@ -371,11 +379,6 @@ namespace Rubberduck.Common
             var events = items.Where(item => item.IsBuiltIn
                                                      && item.ParentScope == "FM20.DLL;MSForms.FormEvents"
                                                      && item.DeclarationType == DeclarationType.Event).ToList();
-
-            var e = items.Where(item => item.DeclarationType == DeclarationType.Event).ToList();
-            var e1 = items.Where(item => item.DeclarationType == DeclarationType.Event && item.IdentifierName == "QueryClose").ToList();
-
-            var s = items.Where(item => item.IdentifierName.Contains("QueryClose") || item.IdentifierName.Contains("Initialize") || item.IdentifierName.Contains("Activate")).ToList();
 
             var handlerNames = events.Select(item => "UserForm_" + item.IdentifierName);
             var handlers = items.Where(item => item.ParentScope == userForm.Scope

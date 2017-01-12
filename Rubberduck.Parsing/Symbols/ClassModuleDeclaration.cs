@@ -1,4 +1,5 @@
 ﻿using Rubberduck.Parsing.Annotations;
+using Rubberduck.Parsing.ComReflection;
 using Rubberduck.Parsing.VBA;
 using Rubberduck.VBEditor;
 using System.Collections.Generic;
@@ -47,15 +48,62 @@ namespace Rubberduck.Parsing.Symbols
             _subtypes = new HashSet<Declaration>();
         }
 
+        // skip IDispatch.. just about everything implements it and RD doesn't need to care about it; don't care about IUnknown either
+        private static readonly HashSet<string> IgnoredInterfaces = new HashSet<string>(new[] { "IDispatch", "IUnknown" });
+
+        public ClassModuleDeclaration(ComCoClass coClass, Declaration parent, QualifiedModuleName module,
+            Attributes attributes)
+            : base(
+                module.QualifyMemberName(coClass.Name),
+                parent,
+                parent,
+                coClass.Name,
+                null,
+                false,
+                coClass.EventInterfaces.Any(),
+                Accessibility.Public,
+                DeclarationType.ClassModule,
+                null,
+                Selection.Home,
+                false,
+                null,
+                true,
+                new List<IAnnotation>(),
+                attributes)
+        {
+            _supertypeNames =
+                coClass.ImplementedInterfaces.Where(i => !i.IsRestricted && !IgnoredInterfaces.Contains(i.Name))
+                    .Select(i => i.Name)
+                    .ToList();
+            _supertypes = new HashSet<Declaration>();
+            _subtypes = new HashSet<Declaration>();
+        }
+
+        public ClassModuleDeclaration(ComInterface intrface, Declaration parent, QualifiedModuleName module,
+            Attributes attributes)
+            : this(
+                module.QualifyMemberName(intrface.Name),
+                parent,
+                intrface.Name,
+                true,
+                new List<IAnnotation>(),
+                attributes) { }
+
         public static IEnumerable<Declaration> GetSupertypes(Declaration type)
         {
             if (type.DeclarationType != DeclarationType.ClassModule)
             {
                 return new List<Declaration>();
             }
-            return ((ClassModuleDeclaration)type).Supertypes;
+            var classType = type as ClassModuleDeclaration;
+            return classType != null ? classType.Supertypes : new List<Declaration>();
         }
 
+        public static bool HasDefaultMember(Declaration type)
+        {
+            var classModule = type as ClassModuleDeclaration;
+            return classModule != null && classModule.DefaultMember != null;
+        }
 
         private bool? _isExposed;
         /// <summary>
@@ -70,23 +118,34 @@ namespace Rubberduck.Parsing.Symbols
                 {
                     return _isExposed.Value;
                 }
-                // TODO: Find out if there's info about "being exposed" in type libraries.
-                // We take the conservative approach of treating all type library modules as exposed.
                 if (IsBuiltIn)
                 {
-                    _isExposed = true;
+                    _isExposed = IsExposedForBuiltInModules();
                     return _isExposed.Value;
                 }
-                var attributeIsExposed = false;
-                IEnumerable<string> value;
-                if (Attributes.TryGetValue("VB_Exposed", out value))
-                {
-                    attributeIsExposed = value.Single() == "True";
-                }
-                _isExposed = attributeIsExposed;
+                _isExposed = HasAttribute("VB_Exposed");
                 return _isExposed.Value;
             }
         }
+
+            // TODO: Find out if there's info about "being exposed" in type libraries.
+            // We take the conservative approach of treating all type library modules as exposed.
+            private static bool IsExposedForBuiltInModules()
+            {
+                return true;
+            }
+
+            private bool HasAttribute(string attributeName)
+            {
+                var hasAttribute = false;
+                IEnumerable<string> value;
+                if (Attributes.TryGetValue(attributeName, out value))
+                {
+                    hasAttribute = value.Single() == "True";
+                }
+                return hasAttribute;
+            }
+              
 
         private bool? _isGlobal;
         public bool IsGlobalClassModule
@@ -97,30 +156,16 @@ namespace Rubberduck.Parsing.Symbols
                 {
                     return _isGlobal.Value;
                 }
-
-                var attributeIsGlobalClassModule = false;
-                IEnumerable<string> value;
-                if (Attributes.TryGetValue("VB_GlobalNamespace", out value))
-                {
-                    attributeIsGlobalClassModule = value.Single() == "True";
-                }
-                _isGlobal = attributeIsGlobalClassModule;
-
-                if (!_isGlobal.Value)
-                {
-                    foreach (var type in Subtypes)
-                    {
-                        if (type is ClassModuleDeclaration && ((ClassModuleDeclaration) type).IsGlobalClassModule)
-                        {
-                            _isGlobal = true;
-                            break;
-                        }
-                    }
-                }
-
+                _isGlobal = HasAttribute("VB_GlobalNamespace") || IsGlobalFromSubtypes();
                 return _isGlobal.Value;
             }
         }
+
+            private bool IsGlobalFromSubtypes()
+            {
+                return Subtypes.Any(subtype => (subtype is ClassModuleDeclaration && ((ClassModuleDeclaration)subtype).IsGlobalClassModule));
+            }
+
 
         private bool? _hasPredeclaredId;
         /// <summary>
@@ -135,17 +180,11 @@ namespace Rubberduck.Parsing.Symbols
                 {
                     return _hasPredeclaredId.Value;
                 }
-
-                var attributeHasDefaultInstanceVariable = false;
-                IEnumerable<string> value;
-                if (Attributes.TryGetValue("VB_PredeclaredId", out value))
-                {
-                    attributeHasDefaultInstanceVariable = value.Single() == "True";
-                }
-                _hasPredeclaredId = attributeHasDefaultInstanceVariable;
+                _hasPredeclaredId = HasAttribute("VB_PredeclaredId");
                 return _hasPredeclaredId.Value;
             }
         }
+
 
         public bool HasDefaultInstanceVariable
         {

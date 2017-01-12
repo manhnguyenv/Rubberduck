@@ -15,10 +15,10 @@ namespace Rubberduck.SettingsProvider
         private const string DefaultConfigFile = "rubberduck.config";
         private const string RootElement = "Configuration";
 
-        private readonly XmlSerializerNamespaces _emptyNamespace =
-            new XmlSerializerNamespaces(new[] { new XmlQualifiedName(string.Empty, string.Empty) });
+        private static readonly XmlSerializerNamespaces EmptyNamespace =
+            new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
         
-        private readonly XmlWriterSettings _outputXmlSettings = new XmlWriterSettings
+        private static readonly XmlWriterSettings OutputXmlSettings = new XmlWriterSettings
         {
             Encoding = new UTF8Encoding(false),
             Indent = true,
@@ -37,14 +37,14 @@ namespace Rubberduck.SettingsProvider
 
             if (!File.Exists(FilePath))
             {
-                return (T)Convert.ChangeType(null, type);
+                return FailedLoadReturnValue();
             }
             var doc = GetConfigurationDoc(FilePath);
             
             var node = doc.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(type.Name));
             if (node == null)
             {
-                return (T)Convert.ChangeType(null, type);
+                return FailedLoadReturnValue();
             }
 
             using (var reader = node.CreateReader())
@@ -57,10 +57,16 @@ namespace Rubberduck.SettingsProvider
                 }
                 catch
                 {
-                    return (T)Convert.ChangeType(null, type);
+                    return FailedLoadReturnValue();
                 }
             }  
         }
+
+            private static T FailedLoadReturnValue()
+            {
+                return (T)Convert.ChangeType(null, typeof(T));
+            }
+
 
         public void Save(T toSerialize)
         {
@@ -72,7 +78,7 @@ namespace Rubberduck.SettingsProvider
             using (var writer = new StreamWriter(stream))
             {
                 var serializer = new XmlSerializer(type);
-                serializer.Serialize(writer, toSerialize, _emptyNamespace);
+                serializer.Serialize(writer, toSerialize, EmptyNamespace);
                 var settings = XElement.Parse(_outputEncoding.GetString(stream.ToArray()), LoadOptions.SetBaseUri);
                 if (node != null)
                 {
@@ -91,7 +97,7 @@ namespace Rubberduck.SettingsProvider
                 Directory.CreateDirectory(_rootPath);
             }
 
-            using (var xml = XmlWriter.Create(FilePath, _outputXmlSettings))
+            using (var xml = XmlWriter.Create(FilePath, OutputXmlSettings))
             {
                 doc.WriteTo(xml);
             }

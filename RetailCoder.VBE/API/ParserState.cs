@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Vbe.Interop;
 using Rubberduck.Common;
 using Rubberduck.Parsing.VBA;
 using Rubberduck.UI.Command.MenuItems;
 using Rubberduck.Parsing.Preprocessing;
 using System.Globalization;
 using Rubberduck.Parsing.Symbols;
+using Rubberduck.VBEditor.SafeComWrappers;
+using Rubberduck.VBEditor.SafeComWrappers.VBA;
 
 namespace Rubberduck.API
 {
     [ComVisible(true)]
     public interface IParserState
     {
-        void Initialize(VBE vbe);
+        void Initialize(Microsoft.Vbe.Interop.VBE vbe);
 
         void Parse();
         void BeginParse();
@@ -49,27 +50,29 @@ namespace Rubberduck.API
 
         private RubberduckParserState _state;
         private AttributeParser _attributeParser;
-        private RubberduckParser _parser;
+        private ParseCoordinator _parser;
+        private VBE _vbe;
 
         public ParserState()
         {
             UiDispatcher.Initialize();
         }
 
-        public void Initialize(VBE vbe)
+        public void Initialize(Microsoft.Vbe.Interop.VBE vbe)
         {
             if (_parser != null)
             {
                 throw new InvalidOperationException("ParserState is already initialized.");
             }
 
-            _state = new RubberduckParserState(vbe, new Sinks(vbe));
+            _vbe = new VBE(vbe);
+            _state = new RubberduckParserState(null);
             _state.StateChanged += _state_StateChanged;
 
-            Func<IVBAPreprocessor> preprocessorFactory = () => new VBAPreprocessor(double.Parse(vbe.Version, CultureInfo.InvariantCulture));
+            Func<IVBAPreprocessor> preprocessorFactory = () => new VBAPreprocessor(double.Parse(_vbe.Version, CultureInfo.InvariantCulture));
             _attributeParser = new AttributeParser(new ModuleExporter(), preprocessorFactory);
-            _parser = new RubberduckParser(_state, _attributeParser, preprocessorFactory,
-                new List<ICustomDeclarationLoader> { new DebugDeclarations(_state), new FormEventDeclarations(_state), new AliasDeclarations(_state) });
+            _parser = new ParseCoordinator(_vbe, _state, _attributeParser, preprocessorFactory,
+                new List<ICustomDeclarationLoader> { new DebugDeclarations(_state), new SpecialFormDeclarations(_state), new FormEventDeclarations(_state), new AliasDeclarations(_state) });
         }
 
         /// <summary>
@@ -151,6 +154,8 @@ namespace Rubberduck.API
                 _state.StateChanged -= _state_StateChanged;
             }
 
+
+            _vbe.Release();            
             _disposed = true;
         }
     }

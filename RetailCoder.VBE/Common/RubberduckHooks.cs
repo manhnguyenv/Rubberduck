@@ -5,36 +5,39 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Vbe.Interop;
 using Rubberduck.Common.Hotkeys;
 using Rubberduck.Common.WinAPI;
 using Rubberduck.Settings;
 using Rubberduck.UI.Command;
 using NLog;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.Common
 {
     public class RubberduckHooks : IRubberduckHooks
     {
         private readonly IntPtr _mainWindowHandle;
-        private readonly IntPtr _oldWndPointer;
-        private readonly User32.WndProc _oldWndProc;
-        private User32.WndProc _newWndProc;
+        private readonly IntPtr _oldWndProc;
+        // This can't be local - otherwise RawInput can't call it in the subclassing chain.
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly User32.WndProc _newWndProc;
         private RawInput _rawinput;
-        private IRawDevice _kb;
-        private IRawDevice _mouse;
+        private RawKeyboard _kb;
+        private RawMouse _mouse;
         private readonly IGeneralConfigService _config;
         private readonly IEnumerable<CommandBase> _commands;
         private readonly IList<IAttachable> _hooks = new List<IAttachable>();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public RubberduckHooks(VBE vbe, IGeneralConfigService config, IEnumerable<CommandBase> commands)
+        public RubberduckHooks(IVBE vbe, IGeneralConfigService config, IEnumerable<CommandBase> commands)
         {
-            _mainWindowHandle = (IntPtr)vbe.MainWindow.HWnd;
-            _oldWndProc = WindowProc;
+            var mainWindow = vbe.MainWindow;
+            {
+                _mainWindowHandle = (IntPtr)mainWindow.HWnd;
+            }
+
             _newWndProc = WindowProc;
-            _oldWndPointer = User32.SetWindowLong(_mainWindowHandle, (int)WindowLongFlags.GWL_WNDPROC, _newWndProc);
-            _oldWndProc = (User32.WndProc)Marshal.GetDelegateForFunctionPointer(_oldWndPointer, typeof(User32.WndProc));
+            _oldWndProc = User32.SetWindowLong(_mainWindowHandle, (int)WindowLongFlags.GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProc));
 
             _commands = commands;
             _config = config;
@@ -42,7 +45,7 @@ namespace Rubberduck.Common
 
         private CommandBase Command(RubberduckHotkey hotkey)
         {
-            return _commands.SingleOrDefault(s => s.Hotkey == hotkey);
+            return _commands.FirstOrDefault(s => s.Hotkey == hotkey);
         }
 
         public void HookHotkeys()
@@ -182,6 +185,9 @@ namespace Rubberduck.Common
         public void Dispose()
         {
             Detach();
+            User32.SetWindowLong(_mainWindowHandle, (int)WindowLongFlags.GWL_WNDPROC, _oldWndProc);
+            _mouse.RawMouseInputReceived -= Mouse_RawMouseInputReceived;
+            _kb.RawKeyInputReceived -= Keyboard_RawKeyboardInputReceived;
         }
 
         private IntPtr WindowProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam)

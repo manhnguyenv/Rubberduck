@@ -515,16 +515,16 @@ namespace RubberduckTests.SmartIndenter
                 "Sub MySub()",
                 "    Dim x1 As Integer",
                 "    Dim _",
-                "        x2 _",
-                "        As Integer",
+                "    x2 _",
+                "    As Integer",
                 "    Dim x3 As _",
-                "        Integer",
+                "    Integer",
                 "    Dim x4 _",
-                "        As _",
-                "        Integer",
+                "    As _",
+                "    Integer",
                 "    Dim x5 As Integer: _",
-                "        Dim x6 As _",
-                "        Integer",
+                "    Dim x6 As _",
+                "    Integer",
                 "    Dim x7 As Integer _",
                 "        'Comment _",
                 "        as _",
@@ -535,7 +535,6 @@ namespace RubberduckTests.SmartIndenter
             var indenter = new Indenter(null, () =>
             {
                 var s = IndenterSettingsTests.GetMockIndenterSettings();
-                s.AlignCommentsWithCode = true;
                 s.IndentFirstDeclarationBlock = true;
                 return s;
             });
@@ -543,27 +542,54 @@ namespace RubberduckTests.SmartIndenter
             Assert.IsTrue(expected.SequenceEqual(actual));
         }
 
-        //https://github.com/rubberduck-vba/Rubberduck/issues/1287
-        [TestMethod]        // Broken in VB6 SmartIndenter.
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2407
+        [TestMethod] 
         [TestCategory("Indenter")]
-        public void ContinuationsInProcedureDeclarationsNoCommentAlignWorks()
+        public void ContinuationsInProcedureDeclarationsWithAlignWorks()
+        {
+            var code = new[]
+            {
+                "Sub MySub()",
+                "Dim x1 As Integer, x2 _",
+                "As Integer",
+                "End Sub"
+            };
+
+            var expected = new[]
+            {
+                "Sub MySub()",
+                "    Dim x1    As Integer, x2 _",
+                "              As Integer",
+                "End Sub"
+            };
+
+            var indenter = new Indenter(null, () =>
+            {
+                var s = IndenterSettingsTests.GetMockIndenterSettings();
+                s.IndentFirstDeclarationBlock = true;
+                s.AlignDims = true;
+                s.AlignDimColumn = 15;
+                return s;
+            });
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2407
+        [TestMethod] 
+        [TestCategory("Indenter")]
+        public void ContinuationsInProcedureDeclarationsWithAlignWorksBareType()
         {
             var code = new[]
             {
                 "Sub MySub()",
                 "Dim x1 As Integer",
-                "Dim _",
-                "x2 _",
-                "As Integer",
-                "Dim x3 As _",
+                "Dim x2 As _",
                 "Integer",
-                "Dim x4 _",
-                "As _",
+                "Dim x3 As Integer: _",
+                "Dim x4 As _",
                 "Integer",
-                "Dim x5 As Integer: _",
-                "Dim x6 As _",
-                "Integer",
-                "Dim x7 As Integer _",
+                "Dim x5 As Integer _",
                 "'Comment _",
                 "as _",
                 "integer",
@@ -573,19 +599,13 @@ namespace RubberduckTests.SmartIndenter
             var expected = new[]
             {
                 "Sub MySub()",
-                "    Dim x1 As Integer",
-                "    Dim _",
-                "        x2 _",
-                "        As Integer",
-                "    Dim x3 As _",
-                "        Integer",
-                "    Dim x4 _",
-                "        As _",
-                "        Integer",
-                "    Dim x5 As Integer: _",
-                "        Dim x6 As _",
-                "        Integer",
-                "    Dim x7 As Integer _",
+                "    Dim x1    As Integer",
+                "    Dim x2    As _",
+                "    Integer",
+                "    Dim x3    As Integer: _",
+                "    Dim x4    As _",
+                "    Integer",
+                "    Dim x5    As Integer _",
                 "        'Comment _",
                 "        as _",
                 "        integer",
@@ -595,8 +615,9 @@ namespace RubberduckTests.SmartIndenter
             var indenter = new Indenter(null, () =>
             {
                 var s = IndenterSettingsTests.GetMockIndenterSettings();
-                s.AlignCommentsWithCode = false;
                 s.IndentFirstDeclarationBlock = true;
+                s.AlignDims = true;
+                s.AlignDimColumn = 15;
                 return s;
             });
             var actual = indenter.Indent(code, string.Empty);
@@ -604,6 +625,7 @@ namespace RubberduckTests.SmartIndenter
         }
 
         [TestMethod]
+        [TestCategory("Indenter")]
         public void ContinuationWithOnlyCommentWorks()
         {
             var code = new[]
@@ -799,6 +821,60 @@ namespace RubberduckTests.SmartIndenter
                 s.AlignContinuations = false;
                 return s;
             });
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2402
+        [TestMethod]        // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]
+        public void SplitNamedParameterAlignsCorrectly()
+        {
+            var code = new[]
+            {
+                 "Sub Foo()",
+                 "Debug.Print WorksheetFunction.Sum(arg1:=1, arg2:=2, arg3 _",
+                 ":=3)",
+                 "End Sub"
+            };
+
+            var expected = new[]
+            {
+                 "Sub Foo()",
+                 "    Debug.Print WorksheetFunction.Sum(arg1:=1, arg2:=2, arg3 _",
+                 "                                      :=3)",
+                 "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
+            var actual = indenter.Indent(code, string.Empty);
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        //https://github.com/rubberduck-vba/Rubberduck/issues/2402
+        [TestMethod]        // Broken in VB6 SmartIndenter.
+        [TestCategory("Indenter")]
+        public void MultipleSplitNamedParametersAlignCorrectly()
+        {
+            var code = new[]
+            {
+                 "Sub Foo()",
+                 "Debug.Print WorksheetFunction.Sum(arg1:=1, arg2:=2, arg3 _",
+                 ":=3, arg4:=4, arg5:=6, arg6 _",
+                 ":=6)",
+                 "End Sub"
+            };
+
+            var expected = new[]
+            {
+                 "Sub Foo()",
+                 "    Debug.Print WorksheetFunction.Sum(arg1:=1, arg2:=2, arg3 _",
+                 "                                      :=3, arg4:=4, arg5:=6, arg6 _",
+                 "                                      :=6)",
+                 "End Sub"
+            };
+
+            var indenter = new Indenter(null, () => IndenterSettingsTests.GetMockIndenterSettings());
             var actual = indenter.Indent(code, string.Empty);
             Assert.IsTrue(expected.SequenceEqual(actual));
         }

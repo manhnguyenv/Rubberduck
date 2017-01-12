@@ -1,6 +1,7 @@
 using System;
-using Microsoft.Vbe.Interop;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.VBEditor
 {
@@ -9,9 +10,9 @@ namespace Rubberduck.VBEditor
     /// </summary>
     public struct QualifiedModuleName
     {
-        public static string GetProjectId(VBProject project)
+        public static string GetProjectId(IVBProject project)
         {
-            if (project == null)
+            if (project.IsWrappingNullReference)
             {
                 return string.Empty;
             }
@@ -24,14 +25,14 @@ namespace Rubberduck.VBEditor
             return project.HelpFile;
         }
 
-        public static string GetProjectId(Reference reference)
+        public static string GetProjectId(IReference reference)
         {
             var projectName = reference.Name;
             var path = reference.FullPath;
             return new QualifiedModuleName(projectName, path, projectName).ProjectId;
         }
 
-        public QualifiedModuleName(VBProject project)
+        public QualifiedModuleName(IVBProject project)
         {
             _component = null;
             _componentName = null;
@@ -43,29 +44,39 @@ namespace Rubberduck.VBEditor
             _contentHashCode = 0;
         }
 
-        public QualifiedModuleName(VBComponent component)
+        public QualifiedModuleName(IVBComponent component)
         {
             _project = null; // field is only assigned when the instance refers to a VBProject.
 
             _component = component;
-            _componentName = component == null ? string.Empty : component.Name;
-            _project = component == null ? null : component.Collection.Parent;
+            _componentName = component.IsWrappingNullReference ? string.Empty : component.Name;
+
+            var components = component.Collection;
+            {
+                _project = components.Parent;
+                _projectName = _project == null ? string.Empty : _project.Name;
+                _projectPath = string.Empty;
+                _projectId = GetProjectId(_project);
+                _projectDisplayName = string.Empty;
+            }
+
             _projectName = _project == null ? string.Empty : _project.Name;
             _projectPath = string.Empty;
             _projectId = GetProjectId(_project);
             _projectDisplayName = string.Empty;
 
             _contentHashCode = 0;
-            if (component == null)
+            if (component.IsWrappingNullReference)
             {
                 return;
             }
 
             var module = component.CodeModule;
-            _contentHashCode = module.CountOfLines > 0
-                // ReSharper disable once UseIndexedProperty
-                ? module.get_Lines(1, module.CountOfLines).GetHashCode()
-                : 0;
+            {
+                _contentHashCode = module.CountOfLines > 0
+                    ? module.GetLines(1, module.CountOfLines).GetHashCode()
+                    : 0;
+            }
         }
 
         /// <summary>
@@ -89,11 +100,11 @@ namespace Rubberduck.VBEditor
             return new QualifiedMemberName(this, member);
         }
 
-        private readonly VBComponent _component;
-        public VBComponent Component { get { return _component; } }
+        private readonly IVBComponent _component;
+        public IVBComponent Component { get { return _component; } }
 
-        private readonly VBProject _project;
-        public VBProject Project { get { return _project; } }
+        private readonly IVBProject _project;
+        public IVBProject Project { get { return _project; } }
 
         private readonly int _contentHashCode;
         public int ContentHashCode { get { return _contentHashCode; } }
@@ -112,6 +123,9 @@ namespace Rubberduck.VBEditor
         private readonly string _projectPath;
         public string ProjectPath { get { return _projectPath; } }
 
+        private static readonly Regex CaptionProjectRegex = new Regex(@"^(?:[^-]+)(?:\s-\s)(?<project>.+)(?:\s-\s.*)?$");
+        private static readonly Regex OpenModuleRegex = new Regex(@"^(?<project>.+)(?<module>\s-\s\[.*\((Code|UserForm)\)\])$");
+
         // because this causes a flicker in the VBE, we only want to do it once.
         // we also want to defer it as long as possible because it is only
         // needed in a couple places, and QualifiedModuleName is used in many places.
@@ -125,19 +139,29 @@ namespace Rubberduck.VBEditor
                     return _projectDisplayName;
                 }
 
-                try
+                var vbe = _project.VBE;
+                var activeProject = vbe.ActiveVBProject;
+                var mainWindow = vbe.MainWindow;
                 {
-                    if (_project.HelpFile != _project.VBE.ActiveVBProject.HelpFile)
+                    try
                     {
-                        _project.VBE.ActiveVBProject = _project;
-                    }
+                        if (_project.HelpFile != activeProject.HelpFile)
+                        {
+                            vbe.ActiveVBProject = _project;
+                        }
 
-                    _projectDisplayName = _project.VBE.MainWindow.Caption.Split(' ').Last();
+                        var caption = mainWindow.Caption;
+                        if (CaptionProjectRegex.IsMatch(caption))
+                        {
+                            caption = CaptionProjectRegex.Matches(caption)[0].Groups["project"].Value;
+                            _projectDisplayName = OpenModuleRegex.IsMatch(caption)
+                                ? OpenModuleRegex.Matches(caption)[0].Groups["project"].Value
+                                : caption;
+                        }
+                    }
+                    // ReSharper disable once EmptyGeneralCatchClause
+                    catch { }
                     return _projectDisplayName;
-                }
-                catch
-                {
-                    return string.Empty;
                 }
             }
         }
@@ -152,13 +176,7 @@ namespace Rubberduck.VBEditor
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hash = 17;
-                hash = hash * 23 + _projectId.GetHashCode();
-                hash = hash * 23 + (_componentName ?? string.Empty).GetHashCode();
-                return hash;
-            }
+            return HashCode.Compute(_projectId, _componentName ?? string.Empty);
         }
 
         public override bool Equals(object obj)

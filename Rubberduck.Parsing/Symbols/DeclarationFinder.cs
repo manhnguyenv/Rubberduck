@@ -4,6 +4,7 @@ using Rubberduck.VBEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Antlr4.Runtime;
 
 namespace Rubberduck.Parsing.Symbols
 {
@@ -11,6 +12,8 @@ namespace Rubberduck.Parsing.Symbols
     {
         private readonly IDictionary<QualifiedModuleName, CommentNode[]> _comments;
         private readonly IDictionary<QualifiedModuleName, IAnnotation[]> _annotations;
+        private readonly IDictionary<QualifiedMemberName, IList<Declaration>> _undeclared;
+
         private readonly IReadOnlyList<Declaration> _declarations;
         private readonly IDictionary<string, Declaration[]> _declarationsByName;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -30,6 +33,13 @@ namespace Rubberduck.Parsing.Symbols
                 IdentifierName = declaration.IdentifierName.ToLowerInvariant()
             })
             .ToDictionary(grouping => grouping.Key.IdentifierName, grouping => grouping.ToArray());
+
+            _undeclared = new Dictionary<QualifiedMemberName, IList<Declaration>>();
+        }
+
+        public IEnumerable<Declaration> Undeclared
+        {
+            get { return _undeclared.SelectMany(e => e.Value); }
         }
 
         public IEnumerable<Declaration> FindDeclarationsWithNonBaseAsType()
@@ -93,7 +103,7 @@ namespace Rubberduck.Parsing.Symbols
             {
                 return result;
             }
-            return new List<Declaration>();
+            return Enumerable.Empty<Declaration>();
         }
 
         public Declaration FindProject(string name, Declaration currentScope = null)
@@ -125,6 +135,24 @@ namespace Rubberduck.Parsing.Symbols
             catch (InvalidOperationException exception)
             {
                 Logger.Error(exception, "Multiple matches found for std.module '{0}'.", name);
+            }
+
+            return result;
+        }
+
+        public Declaration FindClassModule(string name, Declaration parent = null, bool includeBuiltIn = false)
+        {
+            Declaration result = null;
+            try
+            {
+                var matches = MatchName(name);
+                result = matches.SingleOrDefault(declaration => declaration.DeclarationType.HasFlag(DeclarationType.ClassModule)
+                    && (parent == null || parent.Equals(declaration.ParentDeclaration))
+                    && (includeBuiltIn || !declaration.IsBuiltIn));
+            }
+            catch (InvalidOperationException exception)
+            {
+                Logger.Error(exception, "Multiple matches found for class module '{0}'.", name);
             }
 
             return result;
@@ -251,33 +279,53 @@ namespace Rubberduck.Parsing.Symbols
             return match;
         }
 
-        public Declaration FindMemberEnclosingProcedure(Declaration enclosingProcedure, string memberName, DeclarationType memberType)
+        public Declaration FindMemberEnclosingProcedure(Declaration enclosingProcedure, string memberName, DeclarationType memberType, ParserRuleContext onSiteContext = null)
         {
+            if (memberType == DeclarationType.Variable && enclosingProcedure.IdentifierName.Equals(memberName))
+            {
+                return enclosingProcedure;
+            }
             var allMatches = MatchName(memberName);
             var memberMatches = allMatches.Where(m =>
                 m.DeclarationType.HasFlag(memberType)
                 && enclosingProcedure.Equals(m.ParentDeclaration));
-            var match = memberMatches.FirstOrDefault();
-            return match;
+            return memberMatches.FirstOrDefault();
+        }
+
+        public Declaration OnUndeclaredVariable(Declaration enclosingProcedure, string identifierName, ParserRuleContext context)
+        {
+            var undeclaredLocal = new Declaration(new QualifiedMemberName(enclosingProcedure.QualifiedName.QualifiedModuleName, identifierName), enclosingProcedure, enclosingProcedure, "Variant", string.Empty, false, false, Accessibility.Implicit, DeclarationType.Variable, context, context.GetSelection(), false, null, false, null, null, true);
+
+            var hasUndeclared = _undeclared.ContainsKey(enclosingProcedure.QualifiedName);
+            if (hasUndeclared)
+            {
+                var inScopeUndeclared = _undeclared[enclosingProcedure.QualifiedName].FirstOrDefault(d => d.IdentifierName == identifierName);
+                if (inScopeUndeclared != null)
+                {
+                    return inScopeUndeclared;
+                }
+                _undeclared[enclosingProcedure.QualifiedName].Add(undeclaredLocal);
+            }
+            else
+            {
+                _undeclared[enclosingProcedure.QualifiedName] = new List<Declaration> { undeclaredLocal };
+            }
+
+            return undeclaredLocal;
         }
 
         public Declaration FindMemberEnclosedProjectWithoutEnclosingModule(Declaration callingProject, Declaration callingModule, Declaration callingParent, string memberName, DeclarationType memberType)
         {
-            var project = callingProject;
-            var module = callingModule;
-            var parent = callingParent;
-
             var allMatches = MatchName(memberName);
             var memberMatches = allMatches.Where(m =>
                 m.DeclarationType.HasFlag(memberType)
-                && Declaration.GetModuleParent(m).DeclarationType == DeclarationType.ProceduralModule
+                && (Declaration.GetModuleParent(m).DeclarationType == DeclarationType.ProceduralModule || memberType == DeclarationType.Enumeration || memberType == DeclarationType.EnumerationMember)
                 && Declaration.GetProjectParent(m).Equals(callingProject)
                 && !callingModule.Equals(Declaration.GetModuleParent(m)));
             var accessibleMembers = memberMatches.Where(m => AccessibilityCheck.IsMemberAccessible(callingProject, callingModule, callingParent, m));
             var match = accessibleMembers.FirstOrDefault();
             return match;
         }
-
         private static bool IsInstanceSensitive(DeclarationType memberType)
         {
             return memberType.HasFlag(DeclarationType.Variable) || memberType == DeclarationType.Constant || memberType.HasFlag(DeclarationType.Procedure) || memberType.HasFlag(DeclarationType.Function);
