@@ -31,8 +31,8 @@ namespace Rubberduck.UI.Controls
 
         public new string Text
         {
-            get { return base.Text; }
-            set { base.Text = value; }
+            get => base.Text;
+            set => base.Text = value;
         }
 
         public static readonly DependencyProperty TextProperty =
@@ -44,16 +44,13 @@ namespace Rubberduck.UI.Controls
 
         protected override void OnTextChanged(EventArgs e)
         {
-            RaisePropertyChanged("Text");
+            OnPropertyChanged("Text");
             base.OnTextChanged(e);
         }
 
-        public void RaisePropertyChanged(string property)
+        private void OnPropertyChanged(string property)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
