@@ -30,6 +30,8 @@ namespace Rubberduck.UI.CodePane
             }
         }
 
+        public string StatusBarText { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
