@@ -399,6 +399,7 @@
     <Compile Include="UI\CodeExplorer\Commands\CommitCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\AddUserFormCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\CopyResultsCommand.cs" />
+    <Compile Include="UI\CodePane\AvalonSelectionExtensions.cs" />
     <Compile Include="UI\CodePane\CodePaneViewModel.cs" />
     <Compile Include="UI\CodePane\RDCodePane.xaml.cs">
       <DependentUpon>RDCodePane.xaml</DependentUpon>
@@ -1284,6 +1285,7 @@
     <Resource Include="Resources\folder-open.png" />
     <Resource Include="Resources\folder.png" />
     <None Include="Resources\RD-300x250-base.png" />
+    <None Include="Resources\document-number.png" />
     <Content Include="Resources\Rubberduck\RD-AboutWindow.png" />
     <Content Include="Resources\Rubberduck\RD-InstallBanner.bmp" />
     <Content Include="Resources\Rubberduck\RD-InstallWindow.bmp" />
