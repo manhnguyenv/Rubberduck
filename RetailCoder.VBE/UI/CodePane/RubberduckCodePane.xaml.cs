@@ -16,13 +16,18 @@ using System.Windows.Shapes;
 namespace Rubberduck.UI.CodePane
 {
     /// <summary>
-    /// Interaction logic for RDCodePane.xaml
+    /// Interaction logic for RubberduckCodePane.xaml
     /// </summary>
-    public partial class RDCodePane : UserControl
+    public partial class RubberduckCodePane : UserControl
     {
-        public RDCodePane()
+        public RubberduckCodePane()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// todo: implement
+        /// </summary>
+        public string CurrentSelection { get; set; }
     }
 }

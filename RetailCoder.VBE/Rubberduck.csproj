@@ -401,8 +401,8 @@
     <Compile Include="UI\CodeExplorer\Commands\CopyResultsCommand.cs" />
     <Compile Include="UI\CodePane\AvalonSelectionExtensions.cs" />
     <Compile Include="UI\CodePane\CodePaneViewModel.cs" />
-    <Compile Include="UI\CodePane\RDCodePane.xaml.cs">
-      <DependentUpon>RDCodePane.xaml</DependentUpon>
+    <Compile Include="UI\CodePane\RubberduckCodePane.xaml.cs">
+      <DependentUpon>RubberduckCodePane.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Command\ExportAllCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\OpenProjectPropertiesCommand.cs" />
@@ -1365,7 +1365,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\CodePane\RDCodePane.xaml">
+    <Page Include="UI\CodePane\RubberduckCodePane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
