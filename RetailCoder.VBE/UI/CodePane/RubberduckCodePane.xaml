@@ -93,16 +93,17 @@
                 <Label Padding="0" DataContext="{Binding RelativeSource={RelativeSource Self}}" Content="{Binding CurrentSelection}" />  <!-- todo: set DataContext to code-behind -->
             </StatusBarItem>
             <StatusBarItem Grid.Column="2">
-                <Label Padding="0" Content="{Binding StatusBarText}" />
+                <Label Padding="0" Content="{Binding LineCountText}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3">
-                
+                <Label Padding="0" Content="{Binding StatusBarText}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="4">
                 <Label Padding="0" Content="{Binding InspectionStatus}" HorizontalAlignment="Right" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="5">
                 <Button Command="{Binding ShowInspectionResultsCommand}">
+                    <!-- todo: bind to InspectionStatus enum w/converter -->
                     <Image Height="16" Source="../../Resources/tick-circle.png">
                         <Image.Style>
                             <Style TargetType="Image">

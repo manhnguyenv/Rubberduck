@@ -55,6 +55,17 @@ namespace Rubberduck.UI.CodePane
             }
         }
 
+        private string _lineCountText;
+        public string LineCountText
+        {
+            get => _lineCountText;
+            set
+            {
+                _lineCountText = value;
+                OnPropertyChanged();
+            }
+        }
+
         private bool _isDirty;
         public bool IsDirty
         {
@@ -89,6 +100,7 @@ namespace Rubberduck.UI.CodePane
             {
                 IsDirty = true;
             }
+            OnLineCountChanged();
         }
 
         /// <summary>
@@ -101,6 +113,7 @@ namespace Rubberduck.UI.CodePane
             Clear(setDirty);
             _module.AddFromString(content);
             Content = content;
+            OnLineCountChanged();
         }
 
         /// <summary>
@@ -121,7 +134,13 @@ namespace Rubberduck.UI.CodePane
             }
 
             IsDirty = true;
+            OnLineCountChanged();
             Content = _module.Content();
+        }
+
+        private void OnLineCountChanged()
+        {
+            LineCountText = $"{_module.CountOfLines}"; // todo: have a localized "lines" string
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
