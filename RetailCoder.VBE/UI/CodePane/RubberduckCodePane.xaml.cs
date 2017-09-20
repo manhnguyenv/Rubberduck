@@ -29,5 +29,10 @@ namespace Rubberduck.UI.CodePane
         /// todo: implement
         /// </summary>
         public string CurrentSelection { get; set; }
+
+        /// <summary>
+        /// todo: implement
+        /// </summary>
+        public bool ShowLineNumbers { get; set; }
     }
 }

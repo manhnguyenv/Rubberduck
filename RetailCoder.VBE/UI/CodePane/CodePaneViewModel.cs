@@ -18,8 +18,6 @@ namespace Rubberduck.UI.CodePane
         public CodePaneViewModel(ICodeModule module)
         {
             _module = module;
-            _inspectionStatus = "OK";
-            _showLineNumbers = true;
         }
 
         private string _content;
@@ -77,17 +75,6 @@ namespace Rubberduck.UI.CodePane
             }
         }
 
-        private bool _showLineNumbers;
-        public bool ShowLineNumbers
-        {
-            get => _showLineNumbers;
-            set
-            {
-                _showLineNumbers = value;
-                OnPropertyChanged();
-            }
-        }
-
         /// <summary>
         /// Clears the module's entire content.
         /// </summary>
@@ -140,7 +127,7 @@ namespace Rubberduck.UI.CodePane
 
         private void OnLineCountChanged()
         {
-            LineCountText = $"{_module.CountOfLines}"; // todo: have a localized "lines" string
+            LineCountText = string.Format(RubberduckUI.Editor_LineCount, _module.CountOfLines); 
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

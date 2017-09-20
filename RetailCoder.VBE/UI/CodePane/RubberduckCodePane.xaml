@@ -41,14 +41,15 @@
                     <TextBlock Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=Refresh}" />
                 </Button.ToolTip>
             </Button>
+            <!-- todo: setup itemtemplate to show icons and member names -->
             <ComboBox Grid.Column="1" x:Name="MemberProvidersBox" />
             <ComboBox Grid.Column="3" x:Name="MembersBox" />
         </Grid>
 
-        <controls:BindableTextEditor x:Name="TextEditor"
+        <controls:BindableTextEditor x:Name="Editor"
             Grid.Column="0" Grid.Row="1"
             FontFamily="Courier New "
-            ShowLineNumbers="{Binding ShowLineNumbers}"
+            ShowLineNumbers="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ShowLineNumbers}"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto"
             IsReadOnly="False"
@@ -72,7 +73,7 @@
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
             <StatusBarItem Grid.Column="0">
-                <ToggleButton IsChecked="{Binding ShowLineNumbers}">
+                <ToggleButton IsChecked="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ShowLineNumbers}">
                     <Image Height="16" Source="../../Resources/document-number.png">
                         <Image.Style>
                             <Style TargetType="Image">
@@ -89,11 +90,11 @@
                     </ToggleButton.ToolTip>
                 </ToggleButton>
             </StatusBarItem>
-            <StatusBarItem Grid.Column="1">
-                <Label Padding="0" DataContext="{Binding RelativeSource={RelativeSource Self}}" Content="{Binding CurrentSelection}" />  <!-- todo: set DataContext to code-behind -->
-            </StatusBarItem>
             <StatusBarItem Grid.Column="2">
                 <Label Padding="0" Content="{Binding LineCountText}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <Label Padding="0" Content="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=CurrentSelection}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3">
                 <Label Padding="0" Content="{Binding StatusBarText}" />

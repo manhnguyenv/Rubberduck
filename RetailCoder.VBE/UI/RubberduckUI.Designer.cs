@@ -19,7 +19,7 @@ namespace Rubberduck.UI {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class RubberduckUI {
@@ -1526,6 +1526,51 @@ namespace Rubberduck.UI {
         public static string EasterEgg_Continuator {
             get {
                 return ResourceManager.GetString("EasterEgg_Continuator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        public static string Editor_InspectionStatus_None {
+            get {
+                return ResourceManager.GetString("Editor_InspectionStatus_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} issues.
+        /// </summary>
+        public static string Editor_InspectionStatus_Plural {
+            get {
+                return ResourceManager.GetString("Editor_InspectionStatus_Plural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} issue.
+        /// </summary>
+        public static string Editor_InspectionStatus_Singular {
+            get {
+                return ResourceManager.GetString("Editor_InspectionStatus_Singular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} lines.
+        /// </summary>
+        public static string Editor_LineCount {
+            get {
+                return ResourceManager.GetString("Editor_LineCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle line numbers.
+        /// </summary>
+        public static string Editor_ToggleLineNumbers {
+            get {
+                return ResourceManager.GetString("Editor_ToggleLineNumbers", resourceCulture);
             }
         }
         
