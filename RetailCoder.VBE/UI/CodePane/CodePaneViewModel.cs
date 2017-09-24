@@ -37,9 +37,11 @@ namespace Rubberduck.UI.CodePane
 
         // todo: populate for LHS combobox
         public ObservableCollection<Declaration> MemberProviders { get; }
+        public Declaration CurrentMemberProvider { get; }
 
         // todo: populate for RHS combobox
         public ObservableCollection<Declaration> Members { get; }
+        public Declaration CurrentMember { get; }
 
         private string _content;
         public string Content

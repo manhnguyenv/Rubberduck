@@ -48,8 +48,8 @@
                 </Button.ToolTip>
             </Button>
             <!-- todo: setup itemtemplate to show icons and member names -->
-            <ComboBox Grid.Column="1" ItemsSource="{Binding MemberProviders}" />
-            <ComboBox Grid.Column="3" ItemsSource="{Binding Members}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding MemberProviders}" SelectedItem="{Binding CurrentMemberProvider}" />
+            <ComboBox Grid.Column="3" ItemsSource="{Binding Members}" SelectedItem="{Binding CurrentMember}" />
         </Grid>
 
         <!-- editor -->
