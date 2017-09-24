@@ -6,6 +6,7 @@
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              xmlns:local="clr-namespace:Rubberduck.UI.CodePane"
              xmlns:controls="clr-namespace:Rubberduck.UI.Controls"
+             xmlns:abstract="clr-namespace:Rubberduck.Parsing.Inspections.Abstract;assembly=Rubberduck.Parsing"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600" d:DataContext="{d:DesignInstance local:CodePaneViewModel}">
     <Grid>
@@ -69,6 +70,15 @@
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
             </Border.Background>
             <!-- todo: figure out some ItemControl to bind inspection results to -->
+            <ItemsControl ItemsSource="{Binding InspectionResults}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="abstract:IInspectionResult">
+                        <!-- todo: implement an enum-to-solidbrush converter for IInspectionResult.Inspection.Severity -->
+                        <!-- todo: y-position items based on gridrow height and IInspectionResult.Selection.StartLine -->
+                        <Rectangle Fill="{Binding Severity}" Height="3" Width="{Binding Path=Width, RelativeSource={RelativeSource AncestorType=Border}}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Border>
 
         <!-- bottom /status bar -->
