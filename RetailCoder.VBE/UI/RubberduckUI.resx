@@ -2112,6 +2112,9 @@ the projects in the VBE.</value>
   <data name="Editor_LineCount" xml:space="preserve">
     <value>{0} lines</value>
   </data>
+  <data name="Editor_MemberProvider_Declarations" xml:space="preserve">
+    <value>(declarations)</value>
+  </data>
   <data name="Editor_ToggleLineNumbers" xml:space="preserve">
     <value>Toggle line numbers</value>
   </data>

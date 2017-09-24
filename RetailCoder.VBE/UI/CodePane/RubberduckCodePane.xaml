@@ -14,8 +14,13 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
 
-        <Grid >
+        <!-- top bar /dropdowns -->
+        <Grid Grid.ColumnSpan="2">
             <Grid.Background>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
             </Grid.Background>
@@ -46,6 +51,7 @@
             <ComboBox Grid.Column="3" x:Name="MembersBox" />
         </Grid>
 
+        <!-- editor -->
         <controls:BindableTextEditor x:Name="Editor"
             Grid.Column="0" Grid.Row="1"
             FontFamily="Courier New "
@@ -57,7 +63,16 @@
             Text="{Binding Content,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
         </controls:BindableTextEditor>
 
-        <StatusBar Grid.Column="0" Grid.Row="2">
+        <!-- inspection results sidebar -->
+        <Border Grid.Column="1" Grid.Row="1">
+            <Border.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+            </Border.Background>
+            <!-- todo: figure out some ItemControl to bind inspection results to -->
+        </Border>
+
+        <!-- bottom /status bar -->
+        <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>

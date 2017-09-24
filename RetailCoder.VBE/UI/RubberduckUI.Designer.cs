@@ -1566,6 +1566,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (declarations).
+        /// </summary>
+        public static string Editor_MemberProvider_Declarations {
+            get {
+                return ResourceManager.GetString("Editor_MemberProvider_Declarations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle line numbers.
         /// </summary>
         public static string Editor_ToggleLineNumbers {
