@@ -48,8 +48,8 @@
                 </Button.ToolTip>
             </Button>
             <!-- todo: setup itemtemplate to show icons and member names -->
-            <ComboBox Grid.Column="1" x:Name="MemberProvidersBox" />
-            <ComboBox Grid.Column="3" x:Name="MembersBox" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding MemberProviders}" />
+            <ComboBox Grid.Column="3" ItemsSource="{Binding Members}" />
         </Grid>
 
         <!-- editor -->
@@ -75,7 +75,7 @@
                     <DataTemplate DataType="abstract:IInspectionResult">
                         <!-- todo: implement an enum-to-solidbrush converter for IInspectionResult.Inspection.Severity -->
                         <!-- todo: y-position items based on gridrow height and IInspectionResult.Selection.StartLine -->
-                        <Rectangle Fill="{Binding Severity}" Height="3" Width="{Binding Path=Width, RelativeSource={RelativeSource AncestorType=Border}}" />
+                        <Rectangle Fill="{Binding Inspection.Severity}" Height="3" Width="{Binding Path=Width, RelativeSource={RelativeSource AncestorType=Border}}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

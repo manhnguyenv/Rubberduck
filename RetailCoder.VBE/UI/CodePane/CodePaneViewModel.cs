@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using NLog;
+using Rubberduck.Parsing.Inspections.Abstract;
+using Rubberduck.Parsing.Symbols;
 using Rubberduck.Properties;
+using Rubberduck.UI.Command;
 using Rubberduck.VBEditor;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
@@ -15,10 +21,25 @@ namespace Rubberduck.UI.CodePane
     {
         private readonly ICodeModule _module;
 
-        public CodePaneViewModel(ICodeModule module)
+        public CodePaneViewModel(ICodeModule module, ReparseCommand reparseCommand)
         {
             _module = module;
+            RefreshCommand = reparseCommand;
+            // todo: implement some module-scoped inspection results pane
+            ShowInspectionResultsCommand = new DelegateCommand(LogManager.GetCurrentClassLogger(), o => {}, o => false);
         }
+
+        public ICommand RefreshCommand { get; }
+        public ICommand ShowInspectionResultsCommand { get; }
+
+        // todo: figure out a way to get filtered IInspector results in here
+        public ObservableCollection<IInspectionResult> InspectionResults { get; }
+
+        // todo: populate for LHS combobox
+        public ObservableCollection<Declaration> MemberProviders { get; }
+
+        // todo: populate for RHS combobox
+        public ObservableCollection<Declaration> Members { get; }
 
         private string _content;
         public string Content
