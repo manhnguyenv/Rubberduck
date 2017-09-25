@@ -3,12 +3,33 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 using Rubberduck.VBEditor.SafeComWrappers.MSForms;
 using Rubberduck.VBEditor.WindowsApi;
 
 namespace Rubberduck.VBEditor.Events
 {
+    public class AttachingWindowEventArgs : EventArgs
+    {
+        public AttachingWindowEventArgs(IWindow window, ICodePane codePane)
+        {
+            Window = window;
+            CodePane = codePane;
+        }
+
+        public IWindow Window { get; }
+        public ICodePane CodePane { get; }
+
+        public UserControl InjectedControl { get; private set; }
+
+        public void Inject(UserControl control)
+        {
+            InjectedControl = control;
+            InjectedControl.Dock = DockStyle.Fill;
+        }
+    }
+
     public static class VBENativeServices
     {
         private static User32.WinEventProc _eventProc;
@@ -17,24 +38,21 @@ namespace Rubberduck.VBEditor.Events
   
         public struct WindowInfo
         {
-            private readonly IntPtr _handle;
-            private readonly IWindow _window;
-            private readonly IWindowEventProvider _subclass;
+            public IntPtr Hwnd { get; }
+            public IWindow Window { get; }
 
-            public IntPtr Hwnd { get { return _handle; } } 
-            public IWindow Window { get { return _window; } }
-            internal IWindowEventProvider Subclass { get { return _subclass; } }
+            internal IWindowEventProvider Subclass { get; }
 
             internal WindowInfo(IntPtr handle, IWindow window, IWindowEventProvider source)
             {
-                _handle = handle;
-                _window = window;
-                _subclass = source;
+                Hwnd = handle;
+                Window = window;
+                Subclass = source;
             }
         }
 
         //This *could* be a ConcurrentDictionary, but there other operations that need the lock around it anyway.
-        private static readonly Dictionary<IntPtr, WindowInfo> TrackedWindows = new Dictionary<IntPtr, WindowInfo>();
+        private static readonly IDictionary<IntPtr, WindowInfo> TrackedWindows = new Dictionary<IntPtr, WindowInfo>();
         private static readonly object ThreadLock = new object();
         
         private static uint _threadId;
@@ -111,14 +129,45 @@ namespace Rubberduck.VBEditor.Events
                 Debug.Assert(!TrackedWindows.ContainsKey(hwnd));
                 var window = GetWindowFromHwnd(hwnd);
                 if (window == null) return;
-                var source = window.Type == WindowKind.CodeWindow
-                    ? new CodePaneSubclass(hwnd, GetCodePaneFromHwnd(hwnd)) as IWindowEventProvider
-                    : new DesignerWindowSubclass(hwnd);
+
+                switch (window.Type)
+                {
+                    case WindowKind.CodeWindow:
+                        AttachCodePane(window, hwnd);
+                        break;
+                    case WindowKind.Designer:
+                        //AttachDesignerWindow(window, hwnd);
+                        break;
+                    case WindowKind.MainWindow:
+                        break;
+                }
+            }           
+        }
+
+        public static event EventHandler<AttachingWindowEventArgs> AttachingCodePane;
+        private static void AttachCodePane(IWindow window, IntPtr hwnd)
+        {
+            var codePane = GetCodePaneFromHwnd(hwnd);
+            var args = new AttachingWindowEventArgs(window, codePane);
+            AttachingCodePane?.Invoke(typeof(VBENativeServices), args);
+            if ((args.InjectedControl?.Handle ?? IntPtr.Zero) != IntPtr.Zero)
+            {
+                var source = new CodePaneSubclass(hwnd, codePane, args.InjectedControl);
                 var info = new WindowInfo(hwnd, window, source);
                 source.FocusChange += FocusDispatcher;
                 TrackedWindows.Add(hwnd, info);
-            }           
+            }
         }
+
+        ////public static event EventHandler<AttachingWindowEventArgs> AttachingDesignerWindow;
+        //private static void AttachDesignerWindow(IWindow window, IntPtr hwnd)
+        //{
+        //    //var source = new DesignerWindowSubclass(hwnd);
+        //    //var info = new WindowInfo(hwnd, window, source);
+        //    //source.FocusChange += FocusDispatcher;
+        //    //TrackedWindows.Add(hwnd, info);
+        //    ////AttachingDesignerWindow?.Invoke(typeof(VBENativeServices), args);
+        //}
 
         private static void DetachWindow(IntPtr hwnd)
         {
@@ -162,10 +211,7 @@ namespace Rubberduck.VBEditor.Events
         public static event EventHandler<WindowChangedEventArgs> WindowFocusChange;
         private static void OnWindowFocusChange(object sender, WindowChangedEventArgs eventArgs)
         {
-            if (WindowFocusChange != null)
-            {
-                WindowFocusChange.Invoke(sender, eventArgs);
-            }
+            WindowFocusChange?.Invoke(sender, eventArgs);
         } 
 
         private static ICodePane GetCodePaneFromHwnd(IntPtr hwnd)

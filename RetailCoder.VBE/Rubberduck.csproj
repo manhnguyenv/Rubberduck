@@ -404,6 +404,12 @@
     <Compile Include="UI\CodePane\RubberduckCodePane.xaml.cs">
       <DependentUpon>RubberduckCodePane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\CodePane\RubberduckCodeWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\CodePane\RubberduckCodeWindow.Designer.cs">
+      <DependentUpon>RubberduckCodeWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Command\ExportAllCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\OpenProjectPropertiesCommand.cs" />
     <Compile Include="UI\CodeExplorer\Commands\RenameCommand.cs" />
@@ -978,6 +984,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\CodePane\RubberduckCodeWindow.resx">
+      <DependentUpon>RubberduckCodeWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Inspections\InspectionResultsWindow.resx">
       <DependentUpon>InspectionResultsWindow.cs</DependentUpon>

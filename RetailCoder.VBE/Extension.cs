@@ -57,6 +57,7 @@ namespace Rubberduck
                     var vbe = (VBE) Application;                  
                     _ide = new VBEditor.SafeComWrappers.VBA.VBE(vbe);
                     VBENativeServices.HookEvents(_ide);
+                    VBENativeServices.AttachingCodePane += VBENativeServices_AttachingCodePane;
                     
                     var addin = (AddIn)AddInInst;
                     _addin = new VBEditor.SafeComWrappers.VBA.AddIn(addin) { Object = this };
@@ -85,6 +86,11 @@ namespace Rubberduck
             {
                 Console.WriteLine(e);
             }
+        }
+
+        private void VBENativeServices_AttachingCodePane(object sender, AttachingWindowEventArgs e)
+        {
+            e.Inject(new UI.CodePane.RubberduckCodeWindow());
         }
 
         Assembly LoadFromSameFolder(object sender, ResolveEventArgs args)

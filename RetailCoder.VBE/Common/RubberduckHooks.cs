@@ -131,7 +131,7 @@ namespace Rubberduck.Common
             OnMessageReceived(sender, e);
         }
 
-        public override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+        protected override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
         {
             var suppress = false;
             switch ((WM)msg)

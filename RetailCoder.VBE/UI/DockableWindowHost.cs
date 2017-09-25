@@ -186,7 +186,8 @@ namespace Rubberduck.UI
             }
 
             private bool _closing;
-            public override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+
+            protected override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
             {
                 switch ((uint)msg)
                 {

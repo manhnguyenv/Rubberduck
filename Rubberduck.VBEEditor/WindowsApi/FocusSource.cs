@@ -1,6 +1,5 @@
 ﻿using System;
 using Rubberduck.VBEditor.Events;
-using Rubberduck.VBEditor.SafeComWrappers.MSForms;
 
 namespace Rubberduck.VBEditor.WindowsApi
 {
@@ -11,10 +10,7 @@ namespace Rubberduck.VBEditor.WindowsApi
         public event EventHandler<WindowChangedEventArgs> FocusChange;
         protected void OnFocusChange(WindowChangedEventArgs eventArgs)
         {
-            if (FocusChange != null)
-            {
-                FocusChange.Invoke(this, eventArgs);
-            }
+            FocusChange?.Invoke(this, eventArgs);
         }
 
         protected virtual void DispatchFocusEvent(FocusType type)
@@ -27,7 +23,7 @@ namespace Rubberduck.VBEditor.WindowsApi
             OnFocusChange(new WindowChangedEventArgs(Hwnd, window.Value.Window, null, type));
         }
 
-        public override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+        protected override int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
         {
             switch ((uint)msg)
             {

@@ -6,15 +6,28 @@ namespace Rubberduck.VBEditor.WindowsApi
 {
     public abstract class SubclassingWindow : IDisposable
     {
+        /// <remarks>
+        /// https://msdn.microsoft.com/en-us/library/windows/desktop/ms632612(v=vs.85).aspx
+        /// </remarks>>
+        private struct WindowPos
+        {
+            public IntPtr hwnd;
+            public IntPtr hwndInsertAfter;
+            public int x;
+            public int y;
+            public int cx;
+            public int cy;
+            public uint flags;
+        }
+
         private readonly IntPtr _subclassId;
-        private readonly IntPtr _hwnd;
         private readonly SubClassCallback _wndProc;
         private bool _listening;
         private GCHandle _thisHandle;
 
         private readonly object _subclassLock = new object();
 
-        public delegate int SubClassCallback(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData);
+        protected delegate int SubClassCallback(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -29,17 +42,17 @@ namespace Rubberduck.VBEditor.WindowsApi
         [DllImport("ComCtl32.dll", CharSet = CharSet.Auto)]
         private static extern int DefSubclassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam);
 
-        public IntPtr Hwnd { get { return _hwnd; } }
+        protected IntPtr Hwnd { get; }
 
         protected SubclassingWindow(IntPtr subclassId, IntPtr hWnd)
         {
             _subclassId = subclassId;
-            _hwnd = hWnd;
+            Hwnd = hWnd;
             _wndProc = SubClassProc;
             AssignHandle();
         }
 
-        private bool _disposed = false;
+        private bool _disposed;
         public void Dispose()
         {
             if (_disposed)
@@ -57,7 +70,7 @@ namespace Rubberduck.VBEditor.WindowsApi
         {
             lock (_subclassLock)
             {
-                var result = SetWindowSubclass(_hwnd, _wndProc, _subclassId, IntPtr.Zero);
+                var result = SetWindowSubclass(Hwnd, _wndProc, _subclassId, IntPtr.Zero);
                 if (result != 1)
                 {
                     throw new Exception("SetWindowSubClass Failed");
@@ -81,7 +94,7 @@ namespace Rubberduck.VBEditor.WindowsApi
                     return;
                 }
                 Debug.WriteLine("SubclassingWindow.ReleaseHandle called for hWnd " + Hwnd);
-                var result = RemoveWindowSubclass(_hwnd, _wndProc, _subclassId);
+                var result = RemoveWindowSubclass(Hwnd, _wndProc, _subclassId);
                 if (result != 1)
                 {
                     throw new Exception("RemoveWindowSubclass Failed");
@@ -90,7 +103,12 @@ namespace Rubberduck.VBEditor.WindowsApi
             }
         }
 
-        public virtual int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
+        protected virtual void HandleResized(int width, int height)
+        {
+            // no-op default
+        }
+
+        protected virtual int SubClassProc(IntPtr hWnd, IntPtr msg, IntPtr wParam, IntPtr lParam, IntPtr uIdSubclass, IntPtr dwRefData)
         {
             if (!_listening)
             {
@@ -98,8 +116,19 @@ namespace Rubberduck.VBEditor.WindowsApi
                 return DefSubclassProc(hWnd, msg, wParam, lParam);
             }
 
+            //if ((uint)msg == (uint)WM.SIZE)
+            //{
+            //    HandleResized(lParam.LoWord(), lParam.HiWord());
+            //}
+
+            if ((uint) msg == (uint) WM.WINDOWPOSCHANGED)
+            {
+                var pos = (WindowPos)Marshal.PtrToStructure(lParam, typeof(WindowPos));
+                HandleResized(pos.cx, pos.cy);
+            }
+
             if ((uint)msg == (uint)WM.RUBBERDUCK_SINKING || (uint)msg == (uint)WM.DESTROY)
-            {               
+            {
                 ReleaseHandle();                
             }
             return DefSubclassProc(hWnd, msg, wParam, lParam);
