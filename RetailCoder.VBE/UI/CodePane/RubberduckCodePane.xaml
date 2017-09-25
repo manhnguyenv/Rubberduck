@@ -30,6 +30,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Command="{Binding RefreshCommand}">
                 <Image Height="16" Width="16" Source="../../Resources/arrow-circle-double.png">

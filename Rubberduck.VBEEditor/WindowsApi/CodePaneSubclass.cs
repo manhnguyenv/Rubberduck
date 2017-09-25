@@ -14,7 +14,7 @@ namespace Rubberduck.VBEditor.WindowsApi
 
         public ICodePane CodePane => _pane;
 
-        internal CodePaneSubclass(IntPtr hwnd, ICodePane pane, System.Windows.Forms.UserControl control) 
+        internal CodePaneSubclass(IntPtr hwnd, ICodePane pane, UserControl control) 
             : base(hwnd)
         {
             _hwnd = hwnd;
@@ -22,8 +22,10 @@ namespace Rubberduck.VBEditor.WindowsApi
             _control = control;
             User32.SetParent(control.Handle, hwnd);
 
-            User32.GetWindowRect(hwnd, out var rect);
-            User32.SetWindowPos(control.Handle, IntPtr.Zero, rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top, 0);
+            var rect = new User32.RECT();
+            User32.GetClientRect(hwnd, ref rect);
+            User32.MoveWindow(control.Handle, 0, 0, rect.Right - rect.Left, rect.Bottom - rect.Top, true);
+            //User32.SetWindowPos(_control.Handle, new IntPtr(-1), 0, 0, rect.Right - rect.Left, rect.Bottom - rect.Top, 0);
         }
 
         protected override void HandleResized(int width, int height)
