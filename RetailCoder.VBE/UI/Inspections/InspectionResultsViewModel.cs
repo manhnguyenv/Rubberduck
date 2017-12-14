@@ -41,6 +41,8 @@ namespace Rubberduck.UI.Inspections
         private readonly IGeneralConfigService _configService;
         private readonly IOperatingSystem _operatingSystem;
 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public InspectionResultsViewModel(RubberduckParserState state, IInspector inspector, IQuickFixProvider quickFixProvider,
             INavigateCommand navigateCommand, ReparseCommand reparseCommand,
             IClipboardWriter clipboard, IGeneralConfigService configService, IOperatingSystem operatingSystem)
@@ -305,11 +307,17 @@ namespace Rubberduck.UI.Inspections
 
             UiDispatcher.Invoke(() =>
             {
-                //Results = new ObservableCollection<IInspectionResult>(results);
-
-                IsBusy = false;
-                IsRefreshing = false;
-                SelectedItem = null;
+                try
+                {
+                    IsBusy = false;
+                    OnPropertyChanged("EmptyUIRefreshVisibility");
+                    IsRefreshing = false;
+                    SelectedItem = null;
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error(exception, "Exception thrown trying to refresh the inspection results view on th UI thread.");
+                }
             });
 
             stopwatch.Stop();
@@ -476,6 +484,22 @@ namespace Rubberduck.UI.Inspections
         private bool CanExecuteCopyResultsCommand(object parameter)
         {
             return !IsBusy && _results != null && _results.Any();
+        }
+
+        public Visibility EmptyUIRefreshVisibility
+        {
+            get
+            {
+                return _state.Projects.Count > 0 ? Visibility.Hidden : Visibility.Visible;
+            }
+        }
+
+        public Visibility EmptyUIRefreshMessageVisibility
+        {
+            get
+            {
+                return _isBusy ? Visibility.Hidden : Visibility.Visible;
+            }
         }
 
         public void Dispose()

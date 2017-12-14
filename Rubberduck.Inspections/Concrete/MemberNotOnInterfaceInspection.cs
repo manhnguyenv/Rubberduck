@@ -15,26 +15,23 @@ namespace Rubberduck.Inspections.Concrete
         public MemberNotOnInterfaceInspection(RubberduckParserState state)
             : base(state) { }
 
-        public override Type Type => typeof(MemberNotOnInterfaceInspection);
-
         public override CodeInspectionType InspectionType => CodeInspectionType.CodeQualityIssues;
 
-        public override IEnumerable<IInspectionResult> GetInspectionResults()
+        protected override IEnumerable<IInspectionResult> DoGetInspectionResults()
         {
             var unresolved = State.DeclarationFinder.UnresolvedMemberDeclarations.Where(decl => !IsIgnoringInspectionResultFor(decl, AnnotationName)).ToList();
 
             var targets = Declarations.Where(decl => decl.AsTypeDeclaration != null &&
                                                      !decl.AsTypeDeclaration.IsUserDefined &&
-                                                     decl.AsTypeDeclaration.DeclarationType == DeclarationType.ClassModule &&
+                                                     decl.AsTypeDeclaration.DeclarationType.HasFlag(DeclarationType.ClassModule) &&
                                                      ((ClassModuleDeclaration)decl.AsTypeDeclaration).IsExtensible)
                                        .SelectMany(decl => decl.References).ToList();
-
             return from access in unresolved
                    let callingContext = targets.FirstOrDefault(usage => usage.Context.Equals(access.CallingContext))
                    where callingContext != null
                    select new DeclarationInspectionResult(this,
-                                               string.Format(InspectionsUI.MemberNotOnInterfaceInspectionResultFormat, access.IdentifierName, callingContext.Declaration.AsTypeDeclaration.IdentifierName),
-                                               access);
+                        string.Format(InspectionsUI.MemberNotOnInterfaceInspectionResultFormat, access.IdentifierName, callingContext.Declaration.AsTypeDeclaration.IdentifierName),
+                        access);
         }
     }
 }

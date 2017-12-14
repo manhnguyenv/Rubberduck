@@ -246,9 +246,8 @@ namespace Rubberduck.VBEditor.Events
         /// </summary>
         /// <returns>True if the active thread is on the VBE's thread.</returns>
         public static bool IsVbeWindowActive()
-        {           
-            uint hThread;
-            User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), out hThread);
+        {
+            User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), out var hThread);
             return (IntPtr)hThread == (IntPtr)_threadId;
         }
 

@@ -130,6 +130,33 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy successful.
+        /// </summary>
+        public static string AboutWindow_CopyVersionCaption {
+            get {
+                return ResourceManager.GetString("AboutWindow_CopyVersionCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click here to copy version info to clipboard..
+        /// </summary>
+        public static string AboutWindow_CopyVersionLabel {
+            get {
+                return ResourceManager.GetString("AboutWindow_CopyVersionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version information copied to clipboard..
+        /// </summary>
+        public static string AboutWindow_CopyVersionMessage {
+            get {
+                return ResourceManager.GetString("AboutWindow_CopyVersionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All contributors to our GitHub repository
         ///All our stargazers, likers &amp; followers, for the warm fuzzies
         ///...and anyone reading this!.
@@ -564,6 +591,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Test module with stubs.
+        /// </summary>
+        public static string CodeExplorer_AddTestModuleWithStubsText {
+            get {
+                return ResourceManager.GetString("CodeExplorer_AddTestModuleWithStubsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collapse node and all child nodes.
         /// </summary>
         public static string CodeExplorer_CollapseSubnodesToolTip {
@@ -614,25 +650,6 @@ namespace Rubberduck.UI {
         public static string CodeExplorer_DisplaySignaturesText {
             get {
                 return ResourceManager.GetString("CodeExplorer_DisplaySignaturesText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to to parse and process
-        ///the projects in the VBE..
-        /// </summary>
-        public static string CodeExplorer_EmptyViewMessage {
-            get {
-                return ResourceManager.GetString("CodeExplorer_EmptyViewMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rubberduck doesn&apos;t see anything yet..
-        /// </summary>
-        public static string CodeExplorer_EmptyViewMessage_Title {
-            get {
-                return ResourceManager.GetString("CodeExplorer_EmptyViewMessage_Title", resourceCulture);
             }
         }
         
@@ -1107,6 +1124,42 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cyclomatic Complexity.
+        /// </summary>
+        public static string CodeMetrics_Complexity {
+            get {
+                return ResourceManager.GetString("CodeMetrics_Complexity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lines.
+        /// </summary>
+        public static string CodeMetrics_Lines {
+            get {
+                return ResourceManager.GetString("CodeMetrics_Lines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum Nesting.
+        /// </summary>
+        public static string CodeMetrics_Nesting {
+            get {
+                return ResourceManager.GetString("CodeMetrics_Nesting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code Metrics.
+        /// </summary>
+        public static string CodeMetricsDockablePresenter_Caption {
+            get {
+                return ResourceManager.GetString("CodeMetricsDockablePresenter_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hook is already attached..
         /// </summary>
         public static string CommonHotkey_HookAttached {
@@ -1526,6 +1579,24 @@ namespace Rubberduck.UI {
         public static string EasterEgg_Continuator {
             get {
                 return ResourceManager.GetString("EasterEgg_Continuator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to to parse and process the projects in the VBE..
+        /// </summary>
+        public static string EmptyUIRefreshMessage {
+            get {
+                return ResourceManager.GetString("EmptyUIRefreshMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rubberduck doesn&apos;t see anything yet..
+        /// </summary>
+        public static string EmptyUIRefreshMessage_Title {
+            get {
+                return ResourceManager.GetString("EmptyUIRefreshMessage_Title", resourceCulture);
             }
         }
         
@@ -3160,7 +3231,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable To Detect Selected Rename Target.
+        ///   Looks up a localized string similar to Unable to detect selected rename target.
         /// </summary>
         public static string RefactorRename_TargetNotDefinedError {
             get {
@@ -3476,7 +3547,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Coult not rename {0}..
+        ///   Looks up a localized string similar to Could not rename {0}..
         /// </summary>
         public static string RenameDialog_DefaultRenameError {
             get {
@@ -3512,7 +3583,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Method {0} is an EventHandler for control &apos;{1}&apos;.  Only the control can be renamed.  Rename &apos;{1}&apos;?.
+        ///   Looks up a localized string similar to Method &apos;{0}&apos; is an EventHandler for control &apos;{1}&apos;.  Only the control can be renamed.  Rename &apos;{1}&apos; instead?.
         /// </summary>
         public static string RenamePresenter_TargetIsControlEventHandler {
             get {
@@ -3521,7 +3592,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Method &apos;{0}&apos; is an implementation of event &apos;{1}.{2}&apos;.  Rename event &apos;{2}&apos;?.
+        ///   Looks up a localized string similar to Method &apos;{0}&apos; is an implementation of event &apos;{1}.{2}&apos;.  Rename event &apos;{2}&apos; instead?.
         /// </summary>
         public static string RenamePresenter_TargetIsEventHandlerImplementation {
             get {
@@ -3728,6 +3799,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Metrics.
+        /// </summary>
+        public static string RubberduckMenu_CodeMetrics {
+            get {
+                return ResourceManager.GetString("RubberduckMenu_CodeMetrics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Na&amp;vigate.
         /// </summary>
         public static string RubberduckMenu_Navigate {
@@ -3742,6 +3822,15 @@ namespace Rubberduck.UI {
         public static string RubberduckMenu_Refactor {
             get {
                 return ResourceManager.GetString("RubberduckMenu_Refactor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string RubberduckMenu_Refresh {
+            get {
+                return ResourceManager.GetString("RubberduckMenu_Refresh", resourceCulture);
             }
         }
         
@@ -4143,7 +4232,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clones remote repository from provided URI. Have an (empty) project active in the editor..
+        ///   Looks up a localized string similar to Clone a remote repository from a provided URL to the local disk. The repository will then be loaded into the active project..
         /// </summary>
         public static string SourceControl_CloneRepositoryDescription {
             get {
@@ -4638,7 +4727,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Creates a new repository from the active project..
+        ///   Looks up a localized string similar to Creates a new local repository from the active project..
         /// </summary>
         public static string SourceControl_InitializeRepositoryDescription {
             get {
@@ -4647,7 +4736,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initialize New Repository.
+        ///   Looks up a localized string similar to Create New Local Repository.
         /// </summary>
         public static string SourceControl_InitializeRepositoryTitle {
             get {
@@ -4809,7 +4898,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open repository from disk. The active project will host the source code..
+        ///   Looks up a localized string similar to Open local repository from disk. The active project will host the source code..
         /// </summary>
         public static string SourceControl_OpenRepositoryDescription {
             get {
@@ -4818,7 +4907,7 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Existing Repository.
+        ///   Looks up a localized string similar to Open Local Repository.
         /// </summary>
         public static string SourceControl_OpenRepositoryTitle {
             get {
@@ -5421,6 +5510,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy to clipboard.
+        /// </summary>
+        public static string ToDoExplorer_CopyToolTip {
+            get {
+                return ResourceManager.GetString("ToDoExplorer_CopyToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string TodoExplorer_Description {
@@ -5435,6 +5533,35 @@ namespace Rubberduck.UI {
         public static string TodoExplorer_LineNumber {
             get {
                 return ResourceManager.GetString("TodoExplorer_LineNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rubberduck TODO Items - {0}
+        ///{1} items found..
+        /// </summary>
+        public static string ToDoExplorer_NumberOfIssuesFound_Plural {
+            get {
+                return ResourceManager.GetString("ToDoExplorer_NumberOfIssuesFound_Plural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rubberduck TODO Items - {0}
+        ///{1} items found..
+        /// </summary>
+        public static string ToDoExplorer_NumberOfIssuesFound_Singular {
+            get {
+                return ResourceManager.GetString("ToDoExplorer_NumberOfIssuesFound_Singular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} - {2}.{3} line {4}..
+        /// </summary>
+        public static string ToDoExplorerToDoItemFormat {
+            get {
+                return ResourceManager.GetString("ToDoExplorerToDoItemFormat", resourceCulture);
             }
         }
         

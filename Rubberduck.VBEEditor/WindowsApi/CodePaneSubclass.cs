@@ -40,7 +40,7 @@ namespace Rubberduck.VBEditor.WindowsApi
             {
                 return;
             }
-            OnFocusChange(new WindowChangedEventArgs(window.Value.Hwnd, window.Value.Window, _pane, type));
+            OnFocusChange(new WindowChangedEventArgs(window.Value.Hwnd, window.Value.Window, CodePane, type));
         }
     }
 }
