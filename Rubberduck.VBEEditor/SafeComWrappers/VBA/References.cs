@@ -16,6 +16,8 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
         public event EventHandler<ReferenceEventArgs> ItemAdded;
         public event EventHandler<ReferenceEventArgs> ItemRemoved;
 
+        public bool EnableEvents { get; set; }
+
         public void HandleEvents(EventHandler<ReferenceEventArgs> handleItemAdded, EventHandler<ReferenceEventArgs> handleItemRemoved)
         {
             var addedHandler = ItemAdded;
@@ -54,12 +56,14 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
 
         private void Target_ItemRemoved(VB.Reference reference)
         {
+            if (!EnableEvents) { return; }
             var handler = ItemRemoved;
             handler?.Invoke(this, new ReferenceEventArgs(new Reference(reference)));
         }
 
         private void Target_ItemAdded(VB.Reference reference)
         {
+            if (!EnableEvents) { return; }
             var handler = ItemAdded;
             handler?.Invoke(this, new ReferenceEventArgs(new Reference(reference)));
         }

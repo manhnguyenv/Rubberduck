@@ -21,6 +21,8 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VB6
         public event EventHandler<ReferenceEventArgs> ItemAdded;
         public event EventHandler<ReferenceEventArgs> ItemRemoved;
 
+        public bool EnableEvents { get; set; }
+
         public int Count => IsWrappingNullReference ? 0 : Target.Count;
 
         public IVBProject Parent => new VBProject(IsWrappingNullReference ? null : Target.Parent);
@@ -29,12 +31,14 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VB6
 
         private void Target_ItemRemoved(VB.Reference reference)
         {
+            if (!EnableEvents) { return; }
             var handler = ItemRemoved;
             handler?.Invoke(this, new ReferenceEventArgs(new Reference(reference)));
         }
 
         private void Target_ItemAdded(VB.Reference reference)
         {
+            if (!EnableEvents) { return; }
             var handler = ItemAdded;
             handler?.Invoke(this, new ReferenceEventArgs(new Reference(reference)));
         }

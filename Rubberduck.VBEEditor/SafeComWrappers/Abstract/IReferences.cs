@@ -4,6 +4,7 @@ namespace Rubberduck.VBEditor.SafeComWrappers.Abstract
 {
     public interface IReferences : ISafeComWrapper, IComCollection<IReference>, IEquatable<IReferences>
     {
+        bool EnableEvents { get; set; }
         event EventHandler<ReferenceEventArgs> ItemAdded;
         event EventHandler<ReferenceEventArgs> ItemRemoved;
 
