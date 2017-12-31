@@ -103,7 +103,7 @@ namespace Rubberduck.UI.AddRemoveReferences
             get => _selectedLibrary;
             set
             {
-                if (!_selectedLibrary.Equals(value))
+                if (_selectedLibrary == null || !_selectedLibrary.Equals(value))
                 {
                     _selectedLibrary = value;
                     OnPropertyChanged();
@@ -117,7 +117,7 @@ namespace Rubberduck.UI.AddRemoveReferences
             get => _selectedProject;
             set
             {
-                if (!_selectedProject.Equals(value))
+                if (_selectedProject == null || !_selectedProject.Equals(value))
                 {
                     _selectedProject = value;
                     OnPropertyChanged();
@@ -131,7 +131,7 @@ namespace Rubberduck.UI.AddRemoveReferences
             get => _selectedReference;
             set
             {
-                if (!_selectedReference.Equals(value))
+                if (_selectedReference == null || !_selectedReference.Equals(value))
                 {
                     _selectedReference = value;
                     OnPropertyChanged();
