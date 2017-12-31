@@ -6,6 +6,5 @@ namespace Rubberduck.AddRemoveReferences
         BuiltIn,
         Loaded,
         Broken,
-        Removed,
     }
 }

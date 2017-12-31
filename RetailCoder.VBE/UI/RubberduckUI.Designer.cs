@@ -5782,6 +5782,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to References....
+        /// </summary>
+        public static string ToolsMenu_AddRemoveReferences {
+            get {
+                return ResourceManager.GetString("ToolsMenu_AddRemoveReferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export Active Project....
         /// </summary>
         public static string ToolsMenu_ExportProject {

@@ -2115,4 +2115,7 @@ les projets dans le VBE.</value>
   <data name="ProjectRefs_Tab_Priority" xml:space="preserve">
     <value>Priorité</value>
   </data>
+  <data name="ToolsMenu_AddRemoveReferences" xml:space="preserve">
+    <value>Références...</value>
+  </data>
 </root>

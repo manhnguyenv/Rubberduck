@@ -13,20 +13,17 @@ namespace Rubberduck.UI.AddRemoveReferences
         private readonly IDictionary<ReferenceStatus, ImageSource> _icons =
             new Dictionary<ReferenceStatus, ImageSource>
             {
+                { ReferenceStatus.None, null },
                 { ReferenceStatus.BuiltIn, ToImageSource(Properties.Resources.padlock) },
                 { ReferenceStatus.Broken, ToImageSource(Properties.Resources.exclamation_diamond) },
                 { ReferenceStatus.Loaded, ToImageSource(Properties.Resources.tick) },
-                { ReferenceStatus.Removed, ToImageSource(Properties.Resources.minus_circle) },
             };
 
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return _icons.First(); // todo fix this: wrecks the xaml designer otherwise
-
-            if (value == null) { return null; }
-            if (value.GetType() != typeof(ReferenceStatus))
+            if (value == null || value.GetType() != typeof(ReferenceStatus))
             {
-                throw new ArgumentException("value must be a ReferenceStatus");
+                return null;
             }
 
             var status = (ReferenceStatus)value;

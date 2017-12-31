@@ -402,6 +402,7 @@
     <Compile Include="UI\About\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\AddRemoveReferences\AddRemoveReferencesPresenter.cs" />
     <Compile Include="UI\AddRemoveReferences\AddRemoveReferencesViewModel.cs" />
     <Compile Include="UI\AddRemoveReferences\ReferenceStatusImageSourceConverter.cs" />
     <Compile Include="UI\CodeExplorer\Commands\AddTestModuleWithStubsCommand.cs" />
@@ -416,7 +417,9 @@
       <DependentUpon>CodeMetricsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\CodeMetrics\CodeMetricsDockablePresenter.cs" />
+    <Compile Include="UI\Command\AddRemoveReferencesCommand.cs" />
     <Compile Include="UI\Command\CodeMetricsCommand.cs" />
+    <Compile Include="UI\Command\MenuItems\AddRemoveReferencesCommandMenuItem.cs" />
     <Compile Include="UI\Command\MenuItems\CodeMetricsCommandMenuItem.cs" />
     <Compile Include="UI\Converters\StringHasNoValueToVisibilityConverter.cs" />
     <Compile Include="UI\Converters\StringHasValueToVisibilityConverter.cs" />

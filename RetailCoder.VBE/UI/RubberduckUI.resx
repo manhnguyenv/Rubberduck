@@ -2209,4 +2209,7 @@ Would you like to import them to Rubberduck?</value>
   <data name="ProjectRefs_Tab_Priority" xml:space="preserve">
     <value>Priority</value>
   </data>
+  <data name="ToolsMenu_AddRemoveReferences" xml:space="preserve">
+    <value>References...</value>
+  </data>
 </root>

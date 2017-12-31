@@ -19,5 +19,6 @@ namespace Rubberduck.UI.Command.MenuItems.ParentMenus
         ToDoExplorer,
         RegexAssistant,
         ExportAll,
+        ProjectReferences,
     }
 }

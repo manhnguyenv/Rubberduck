@@ -494,7 +494,8 @@ namespace Rubberduck.Root
                 typeof(RegexAssistantCommandMenuItem),
                 typeof(ToDoExplorerCommandMenuItem),
                 typeof(CodeMetricsCommandMenuItem),
-                typeof(ExportAllCommandMenuItem)
+                typeof(ExportAllCommandMenuItem),
+                typeof(AddRemoveReferencesCommandMenuItem),
             };
 
             if (_initialSettings.IsSourceControlEnabled)

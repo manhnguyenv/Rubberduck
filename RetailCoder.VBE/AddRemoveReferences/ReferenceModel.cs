@@ -1,4 +1,5 @@
 using System;
+using Rubberduck.VBEditor;
 using Rubberduck.VBEditor.SafeComWrappers;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
@@ -6,16 +7,16 @@ namespace Rubberduck.AddRemoveReferences
 {
     public class ReferenceModel
     {
-        public ReferenceModel(IVBProject project, int priority)
+        public ReferenceModel(IVBProject project)
         {
             Name = project.Name;
-            Priority = priority;
             Guid = string.Empty;
             Description = project.Description;
-            Version = default(Version);
+            Version = new Version();
             FullPath = project.FileName;
             IsBuiltIn = false;
             Type = ReferenceKind.Project;
+            IsVisible = true;
         }
 
         public ReferenceModel(RegisteredLibraryInfo info)
@@ -29,6 +30,7 @@ namespace Rubberduck.AddRemoveReferences
             Type = ReferenceKind.TypeLibrary;
             Flags = info.Flags;
             SubKey = info.SubKey;
+            IsVisible = true;
         }
 
         public ReferenceModel(IReference reference, int priority)
@@ -43,10 +45,11 @@ namespace Rubberduck.AddRemoveReferences
             IsBuiltIn = reference.IsBuiltIn;
             IsBroken = reference.IsBroken;
             Type = reference.Type;
+            IsVisible = true;
         }
 
+        public bool IsVisible { get; set; }
         public bool IsSelected { get; set; }
-        public bool IsRemoved { get; set; }
         public int Priority { get; set; }
 
         public string Name { get; }
@@ -64,12 +67,23 @@ namespace Rubberduck.AddRemoveReferences
             ? ReferenceStatus.BuiltIn
             : IsBroken
                 ? ReferenceStatus.Broken
-                : IsRemoved
-                    ? ReferenceStatus.Removed
-                    : IsSelected
-                        ? ReferenceStatus.Loaded
-                        : ReferenceStatus.None;
+                : IsSelected
+                    ? ReferenceStatus.Loaded
+                    : ReferenceStatus.None;
 
+        public override bool Equals(object obj)
+        {
+            var other = obj as ReferenceModel;
+            if (other == null) { return false; }
 
+            return other.Guid == Guid 
+                && other.Version == Version 
+                && other.FullPath == FullPath;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Compute(Guid, Version, FullPath);
+        }
     }
 }

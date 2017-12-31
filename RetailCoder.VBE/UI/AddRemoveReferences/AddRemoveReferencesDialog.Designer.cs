@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddRemoveReferencesDialog));
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.addRemoveReferencesWindow1 = new Rubberduck.UI.AddRemoveReferences.AddRemoveReferencesWindow();
+            this.HiddenButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // elementHost1
@@ -43,11 +44,24 @@
             this.elementHost1.Text = "elementHost1";
             this.elementHost1.Child = this.addRemoveReferencesWindow1;
             // 
+            // HiddenButton
+            // 
+            this.HiddenButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.HiddenButton.Location = new System.Drawing.Point(275, 209);
+            this.HiddenButton.Name = "HiddenButton";
+            this.HiddenButton.Size = new System.Drawing.Size(75, 23);
+            this.HiddenButton.TabIndex = 2;
+            this.HiddenButton.Text = "Cancel";
+            this.HiddenButton.UseVisualStyleBackColor = true;
+            this.HiddenButton.Visible = false;
+            // 
             // AddRemoveReferencesDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.HiddenButton;
             this.ClientSize = new System.Drawing.Size(624, 441);
+            this.Controls.Add(this.HiddenButton);
             this.Controls.Add(this.elementHost1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddRemoveReferencesDialog";
@@ -63,5 +77,6 @@
 
         private System.Windows.Forms.Integration.ElementHost elementHost1;
         private AddRemoveReferencesWindow addRemoveReferencesWindow1;
+        private System.Windows.Forms.Button HiddenButton;
     }
 }

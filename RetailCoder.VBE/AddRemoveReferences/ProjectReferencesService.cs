@@ -14,7 +14,25 @@ namespace Rubberduck.AddRemoveReferences
         public ProjectReferencesService(IVBProject project)
         {
             _project = project;
+            AvailableProjects = GetAvailableProjects(project);
         }
+
+        private IEnumerable<ReferenceModel> GetAvailableProjects(IVBProject project)
+        {
+            using (var projects = project.Collection)
+            {
+                foreach (var vbProject in projects)
+                {
+                    if (vbProject.ProjectId != project.ProjectId)
+                    {
+                        yield return new ReferenceModel(vbProject);
+                    }
+                    vbProject.Dispose();
+                }
+            }
+        }
+
+        public IEnumerable<ReferenceModel> AvailableProjects { get; }
 
         public IEnumerable<ReferenceModel> References
         {
@@ -27,6 +45,7 @@ namespace Rubberduck.AddRemoveReferences
                     {
                         yield return new ReferenceModel(reference, priority);
                         priority++;
+                        reference.Dispose();
                     }
                 }
             }
@@ -38,7 +57,7 @@ namespace Rubberduck.AddRemoveReferences
             using (var references = _project.References)
             {
                 references.EnableEvents = false;
-                foreach (var reference in model.Where(m => !m.IsBuiltIn).OrderBy(m => m.Priority))
+                foreach (var reference in model.Where(m => !m.IsBuiltIn && m.IsSelected).OrderBy(m => m.Priority))
                 {
                     try
                     {
@@ -65,6 +84,7 @@ namespace Rubberduck.AddRemoveReferences
                     {
                         references.Remove(reference);
                     }
+                    reference.Dispose();
                 }
                 references.EnableEvents = true;
             }

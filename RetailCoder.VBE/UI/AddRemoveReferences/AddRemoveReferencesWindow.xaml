@@ -9,6 +9,60 @@
              d:DesignHeight="380" d:DesignWidth="600"
              d:DataContext="{d:DesignInstance local:AddRemoveReferencesViewModel}">
     <UserControl.Resources>
+        <Style x:Key="XButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Content" Value="✕"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0" Storyboard.TargetName="Background" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="PaleGoldenrod"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BackgroundAnimation" Storyboard.TargetProperty="Opacity" To="1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0" Storyboard.TargetName="Background" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="PaleGoldenrod"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BackgroundAnimation" Storyboard.TargetProperty="Opacity" To="1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="FocusVisualElement" Storyboard.TargetProperty="Opacity" To="1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unfocused" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="Background" CornerRadius="3" Background="White" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                <Grid Background="{TemplateBinding Background}"  Margin="1">
+                                    <Border Opacity="0" x:Name="BackgroundAnimation" Background="PaleGoldenrod" />
+                                </Grid>
+                            </Border>
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"/>
+                            <Rectangle x:Name="DisabledVisualElement" RadiusX="3" RadiusY="3" Fill="#FFFFFFFF" Opacity="0" IsHitTestVisible="false" />
+                            <Rectangle x:Name="FocusVisualElement" RadiusX="2" RadiusY="2" Margin="1" Stroke="PaleGoldenrod" StrokeThickness="1" Opacity="0" IsHitTestVisible="false" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <BitmapImage x:Key="SearchIcon" UriSource="../../Resources/magnifier-medium.png" />
         <BitmapImage x:Key="BrowseIcon" UriSource="../../Resources/folder-open.png" />
         <BitmapImage x:Key="LibraryIcon" UriSource="../../Resources/Custom/PNG/ObjectLibrary.png" />
@@ -63,18 +117,18 @@
                                         <ColumnDefinition Width="20" />
                                         <ColumnDefinition Width="20" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" />
+                                    <TextBox x:Name="ComSearchBox" Grid.Column="0" />
                                     <Border Grid.Column="1" Margin="2">
                                         <Image Source="{StaticResource SearchIcon}" />
                                     </Border>
-                                    <Button Grid.Column="2">
+                                    <Button Grid.Column="2" Command="{Binding BrowseCommand}">
                                         <Image Margin="2,0" Source="{StaticResource BrowseIcon}" />
                                     </Button>
                                 </Grid>
                             </Border>
-                            <ListView Grid.Row="1" Margin="10,10,10,5"
-                                      ItemsSource="{Binding ComLibraries}"
-                                      SelectedItem="{Binding SelectedLibrary}"
+                            <ListView Grid.Row="1" Margin="10,12,10,3"
+                                      ItemsSource="{Binding ComLibraries, Mode=OneWay}"
+                                      SelectedItem="{Binding SelectedLibrary, Mode=OneWayToSource}"
                                       HorizontalContentAlignment="Stretch">
                                 <ListView.ItemTemplate>
                                     <DataTemplate DataType="refs:ReferenceModel">
@@ -86,7 +140,11 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="20" />
                                             </Grid.ColumnDefinitions>
-                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Margin="2,0" />
+                                            <CheckBox Grid.Column="0" 
+                                                      IsChecked="{Binding IsSelected}" 
+                                                      Command="{Binding DataContext.ToggleSelectedCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}" 
+                                                      CommandParameter="{Binding}"
+                                                      Margin="2,0" />
                                             <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="2,0" />
                                             <TextBlock Grid.Column="2" Text="{Binding Version}" Margin="2,0" />
                                             <TextBlock Grid.Column="3" Text="{Binding Description}" Margin="2,0" />
@@ -132,7 +190,7 @@
                                         <ColumnDefinition Width="20" />
                                         <ColumnDefinition Width="20" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" />
+                                    <TextBox x:Name="VbaSearchBox" Grid.Column="0" />
                                     <Border Grid.Column="1" Margin="2">
                                         <Image Source="{StaticResource SearchIcon}" />
                                     </Border>
@@ -142,8 +200,8 @@
                                 </Grid>
                             </Border>
                             <ListView Margin="10"
-                                      ItemsSource="{Binding VbaProjects}"
-                                      SelectedItem="{Binding SelectedProject}"
+                                      ItemsSource="{Binding VbaProjects, Mode=OneWay}"
+                                      SelectedItem="{Binding SelectedProject, Mode=OneWayToSource}"
                                       HorizontalContentAlignment="Stretch">
                                 <ListView.ItemTemplate>
                                     <DataTemplate DataType="refs:ReferenceModel">
@@ -155,7 +213,11 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="20" />
                                             </Grid.ColumnDefinitions>
-                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Margin="2,0" />
+                                            <CheckBox Grid.Column="0" 
+                                                      IsChecked="{Binding IsSelected}" 
+                                                      Command="{Binding DataContext.ToggleSelectedCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}" 
+                                                      CommandParameter="{Binding}"
+                                                      Margin="2,0" />
                                             <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="2,0" />
                                             <TextBlock Grid.Column="2" Text="{Binding Description}" Margin="2,0" />
                                             <TextBlock Grid.Column="3" Text="{Binding FullPath}" Margin="2,0" />
@@ -177,7 +239,8 @@
                     <Border Margin="5" BorderThickness="1" BorderBrush="{x:Static SystemColors.ControlLightBrush}">
                         <DockPanel>
                             <ListView Margin="10"
-                                      ItemsSource="{Binding ComLibraries}"
+                                      ItemsSource="{Binding ProjectReferences, Mode=OneWay}"
+                                      SelectedValue="{Binding SelectedReference, Mode=OneWayToSource}"
                                       HorizontalContentAlignment="Stretch">
                                 <ListView.ItemTemplate>
                                     <DataTemplate DataType="refs:ReferenceModel">
@@ -193,11 +256,13 @@
                                             <TextBlock Grid.Column="1" Text="{Binding Version}" Margin="2,0" />
                                             <TextBlock Grid.Column="2" Text="{Binding Description}" Margin="2,0" />
                                             <Button Grid.Column="3" Margin="1"
-                                                    Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}">
+                                                    Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}"
+                                                    CommandParameter="{Binding}">
                                                 <Image Source="{StaticResource MoveUpIcon}" />
                                             </Button>
                                             <Button Grid.Column="4" Margin="1"
-                                                    Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}">
+                                                    Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AddRemoveReferencesWindow}}}"
+                                                    CommandParameter="{Binding}">
                                                 <Image Source="{StaticResource MoveDownIcon}" />
                                             </Button>
                                         </Grid>
@@ -217,9 +282,9 @@
                     <ColumnDefinition SharedSizeGroup="DialogButtons" MinWidth="100" />
                     <ColumnDefinition SharedSizeGroup="DialogButtons" MinWidth="100" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=OK}" />
-                <Button Grid.Column="1" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=CancelButtonText}" />
-                <Button Grid.Column="2" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ApplyButtonText}" />
+                <Button Grid.Column="0" Command="{Binding OkCommand}" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=OK}" />
+                <Button Grid.Column="1" Command="{Binding CancelCommand}" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=CancelButtonText}" />
+                <Button Grid.Column="2" Command="{Binding ApplyCommand}" Style="{StaticResource DialogButtonStyle}" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ApplyButtonText}" />
             </Grid>
         </Border>
     </Grid>

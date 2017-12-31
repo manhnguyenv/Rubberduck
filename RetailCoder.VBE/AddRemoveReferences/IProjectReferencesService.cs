@@ -5,6 +5,7 @@ namespace Rubberduck.AddRemoveReferences
     public interface IProjectReferencesService
     {
         IEnumerable<ReferenceModel> References { get; }
+        IEnumerable<ReferenceModel> AvailableProjects { get; }
         void Apply(IEnumerable<ReferenceModel> model);
     }
 }

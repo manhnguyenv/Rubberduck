@@ -288,6 +288,11 @@ namespace Rubberduck.Parsing.VBA
             RefreshProjects(_vbe);
         }
 
+        /// <summary>
+        /// Introduced for AddRemoveProjectReferences feature. May need to be moved elsewhere.
+        /// </summary>
+        public IVBProject ActiveProject { get { return _vbe.ActiveVBProject; } }
+
         private void RemoveProject(string projectId, bool notifyStateChanged = false)
         {
             lock (_projects)
