@@ -1,25 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 
 namespace Rubberduck.AddRemoveReferences
 {
-    public static class RegistryKeyExtensions
-    {
-        public static string GetKeyName(this RegistryKey key)
-        {
-            var name = key?.Name;
-            return name?.Substring(name.LastIndexOf(@"\", StringComparison.InvariantCultureIgnoreCase) + 1) ?? string.Empty;
-        }
-    }
-
-    public interface IRegisteredLibraryFinderService
-    {
-        IEnumerable<ReferenceModel> FindRegisteredLibraries();
-    }
-
     public class RegisteredLibraryFinderService : IRegisteredLibraryFinderService
     {
         private readonly bool _use64BitPaths;
