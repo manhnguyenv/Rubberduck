@@ -31,8 +31,8 @@
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0" Dock="Top" Background="{x:Static SystemColors.WindowBrush}">
-            <Label DockPanel.Dock="Top" Content="Add/Remove References" FontWeight="Bold" />
-            <TextBlock DockPanel.Dock="Top" Text="Select COM libraries and VBA projects to add or remove." Margin="10,0,0,10" />
+            <Label DockPanel.Dock="Top" Content="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ProjectRefs_Title}" FontWeight="Bold" />
+            <TextBlock DockPanel.Dock="Top" Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ProjectRefs_Instructions}" Margin="10,0,0,10" />
         </DockPanel>
 
         <Border Grid.Row="1" Background="{x:Static SystemColors.ControlLightBrush}">
@@ -41,7 +41,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <Image Margin="2,0" Source="{StaticResource LibraryIcon}" />
-                            <TextBlock Margin="2,0">COM</TextBlock>
+                            <TextBlock Margin="2,0" Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ProjectRefs_Tab_COM}" />
                         </StackPanel>
                     </TabItem.Header>
                     <Border BorderThickness="1" BorderBrush="{x:Static SystemColors.ControlLightBrush}" Margin="5">
@@ -115,7 +115,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <Image Margin="2,0" Source="{StaticResource VbaProjectIcon}" />
-                            <TextBlock Margin="2,0">VBA</TextBlock>
+                            <TextBlock Margin="2,0" Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ProjectRefs_Tab_VBA}" />
                         </StackPanel>
                     </TabItem.Header>
                     <Border BorderThickness="1" BorderBrush="{x:Static SystemColors.ControlLightBrush}" Margin="5">
@@ -171,7 +171,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <Image Margin="2,0" Source="{StaticResource PriorityIcon}" />
-                            <TextBlock Margin="2,0">Priority</TextBlock>
+                            <TextBlock Margin="2,0" Text="{Resx ResxName=Rubberduck.UI.RubberduckUI, Key=ProjectRefs_Tab_Priority}" />
                         </StackPanel>
                     </TabItem.Header>
                     <Border Margin="5" BorderThickness="1" BorderBrush="{x:Static SystemColors.ControlLightBrush}">

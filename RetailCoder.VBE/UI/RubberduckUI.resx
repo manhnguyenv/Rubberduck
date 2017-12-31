@@ -2152,4 +2152,61 @@ Would you like to import them to Rubberduck?</value>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
     <value>Project References</value>
   </data>
+  <data name="ProjectRefs_Title" xml:space="preserve">
+    <value>Add/Remove References</value>
+  </data>
+  <data name="Outcome" xml:space="preserve">
+    <value>Outcome</value>
+  </data>
+  <data name="HotkeyDescription_IndentModule" xml:space="preserve">
+    <value>Indent module</value>
+  </data>
+  <data name="HotkeyDescription_IndentProcedure" xml:space="preserve">
+    <value>Indent procedure</value>
+  </data>
+  <data name="HotkeyDescription_CodeExplorer" xml:space="preserve">
+    <value>Code Explorer</value>
+  </data>
+  <data name="HotkeyDescription_TestExplorer" xml:space="preserve">
+    <value>Test Explorer</value>
+  </data>
+  <data name="HotkeyDescription_RefactorRename" xml:space="preserve">
+    <value>Refactor / Rename</value>
+  </data>
+  <data name="HotkeyDescription_InspectionResults" xml:space="preserve">
+    <value>Inspection Results</value>
+  </data>
+  <data name="HotkeyDescription_RefactorExtractMethod" xml:space="preserve">
+    <value>Refactor / Extract method</value>
+  </data>
+  <data name="HotkeyDescription_FindSymbol" xml:space="preserve">
+    <value>Find Symbol</value>
+  </data>
+  <data name="HotkeyDescription_RefactorMoveCloserToUsage" xml:space="preserve">
+    <value>Refactor / Move declaration</value>
+  </data>
+  <data name="HotkeyDescription_ParseAll" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="HotkeyDescription_SourceControl" xml:space="preserve">
+    <value>Source Control</value>
+  </data>
+  <data name="HotkeyDescription_RefactorEncapsulateField" xml:space="preserve">
+    <value>Refactor / Encapsulate field</value>
+  </data>
+  <data name="HotkeyDescription_ExportActiveProject" xml:space="preserve">
+    <value>Export Active Project</value>
+  </data>
+  <data name="ProjectRefs_Instructions" xml:space="preserve">
+    <value>Select COM libraries and VBA projects to add or remove.</value>
+  </data>
+  <data name="ProjectRefs_Tab_COM" xml:space="preserve">
+    <value>COM</value>
+  </data>
+  <data name="ProjectRefs_Tab_VBA" xml:space="preserve">
+    <value>VBA</value>
+  </data>
+  <data name="ProjectRefs_Tab_Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
 </root>

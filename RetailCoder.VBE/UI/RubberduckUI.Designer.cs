@@ -2303,6 +2303,123 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code Explorer.
+        /// </summary>
+        public static string HotkeyDescription_CodeExplorer {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_CodeExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Active Project.
+        /// </summary>
+        public static string HotkeyDescription_ExportActiveProject {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_ExportActiveProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find Symbol.
+        /// </summary>
+        public static string HotkeyDescription_FindSymbol {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_FindSymbol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent module.
+        /// </summary>
+        public static string HotkeyDescription_IndentModule {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_IndentModule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent procedure.
+        /// </summary>
+        public static string HotkeyDescription_IndentProcedure {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_IndentProcedure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inspection Results.
+        /// </summary>
+        public static string HotkeyDescription_InspectionResults {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_InspectionResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string HotkeyDescription_ParseAll {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_ParseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refactor / Encapsulate field.
+        /// </summary>
+        public static string HotkeyDescription_RefactorEncapsulateField {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_RefactorEncapsulateField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refactor / Extract method.
+        /// </summary>
+        public static string HotkeyDescription_RefactorExtractMethod {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_RefactorExtractMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refactor / Move declaration.
+        /// </summary>
+        public static string HotkeyDescription_RefactorMoveCloserToUsage {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_RefactorMoveCloserToUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refactor / Rename.
+        /// </summary>
+        public static string HotkeyDescription_RefactorRename {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_RefactorRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source Control.
+        /// </summary>
+        public static string HotkeyDescription_SourceControl {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_SourceControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Explorer.
+        /// </summary>
+        public static string HotkeyDescription_TestExplorer {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_TestExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rubberduck - Implement Interface.
         /// </summary>
         public static string ImplementInterface_Caption {
@@ -2865,6 +2982,15 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Outcome.
+        /// </summary>
+        public static string Outcome {
+            get {
+                return ResourceManager.GetString("Outcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parameter.
         /// </summary>
         public static string Parameter {
@@ -3059,6 +3185,51 @@ namespace Rubberduck.UI {
         public static string ProjectName {
             get {
                 return ResourceManager.GetString("ProjectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select COM libraries and VBA projects to add or remove..
+        /// </summary>
+        public static string ProjectRefs_Instructions {
+            get {
+                return ResourceManager.GetString("ProjectRefs_Instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to COM.
+        /// </summary>
+        public static string ProjectRefs_Tab_COM {
+            get {
+                return ResourceManager.GetString("ProjectRefs_Tab_COM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priority.
+        /// </summary>
+        public static string ProjectRefs_Tab_Priority {
+            get {
+                return ResourceManager.GetString("ProjectRefs_Tab_Priority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VBA.
+        /// </summary>
+        public static string ProjectRefs_Tab_VBA {
+            get {
+                return ResourceManager.GetString("ProjectRefs_Tab_VBA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add/Remove References.
+        /// </summary>
+        public static string ProjectRefs_Title {
+            get {
+                return ResourceManager.GetString("ProjectRefs_Title", resourceCulture);
             }
         }
         

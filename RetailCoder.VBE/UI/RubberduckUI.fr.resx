@@ -2097,4 +2097,22 @@ les projets dans le VBE.</value>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
     <value>Modifier les Références</value>
   </data>
+  <data name="ProjectRefs_Title" xml:space="preserve">
+    <value>Ajouter/Supprimer Références</value>
+  </data>
+  <data name="CommandDescription_ExportAllCommand" xml:space="preserve">
+    <value>Exporter le projet actif</value>
+  </data>
+  <data name="ProjectRefs_Instructions" xml:space="preserve">
+    <value>Sélectionner les librairies COM et projets VBA à ajouter ou enlever.</value>
+  </data>
+  <data name="ProjectRefs_Tab_COM" xml:space="preserve">
+    <value>COM</value>
+  </data>
+  <data name="ProjectRefs_Tab_VBA" xml:space="preserve">
+    <value>VBA</value>
+  </data>
+  <data name="ProjectRefs_Tab_Priority" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
 </root>

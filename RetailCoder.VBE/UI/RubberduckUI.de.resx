@@ -2094,4 +2094,10 @@ Möchten sie die Einstellungen in Rubberduck importieren?</value>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
     <value>Projekt Referenzen</value>
   </data>
+  <data name="ProjectRefs_Tab_COM" xml:space="preserve">
+    <value>COM</value>
+  </data>
+  <data name="ProjectRefs_Tab_VBA" xml:space="preserve">
+    <value>VBA</value>
+  </data>
 </root>
