@@ -11,13 +11,9 @@ namespace Rubberduck.UI.AddRemoveReferences
 {
     public class AddRemoveReferencesPresenter
     {
-        public void Show(IVBProject project, bool is64BitHost)
+        public void Show(AddRemoveReferencesViewModel viewModel)
         {
-            var service = new ProjectReferencesService(project);
-            var finder = new RegisteredLibraryFinderService(is64BitHost);
-            var fileDialog = new OpenFileDialog();
-            var vm = new AddRemoveReferencesViewModel(finder, service, fileDialog);
-            using (var dialog = new AddRemoveReferencesDialog(vm))
+            using (var dialog = new AddRemoveReferencesDialog(viewModel))
             {
                 dialog.ShowDialog();
             }

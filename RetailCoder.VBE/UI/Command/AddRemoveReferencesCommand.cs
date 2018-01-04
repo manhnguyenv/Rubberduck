@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using NLog;
+using Rubberduck.AddRemoveReferences;
 using Rubberduck.Parsing.VBA;
 using Rubberduck.UI.AddRemoveReferences;
+using AddRemoveReferencesViewModel = Rubberduck.UI.AddRemoveReferences.AddRemoveReferencesViewModel;
 
 namespace Rubberduck.UI.Command
 {
@@ -23,10 +25,16 @@ namespace Rubberduck.UI.Command
 
         protected override void OnExecute(object parameter)
         {
-            var presenter = new AddRemoveReferencesPresenter();
             using (var project = _state.ActiveProject)
             {
-                presenter.Show(project, Environment.Is64BitProcess);
+                var service = new ProjectReferencesService(project);
+                var finder = new RegisteredLibraryFinderService(Environment.Is64BitProcess);
+                var fileDialog = new OpenFileDialog();
+
+                var vm = new AddRemoveReferencesViewModel(finder, service, fileDialog);
+
+                var presenter = new AddRemoveReferencesPresenter();
+                presenter.Show(vm);
             }
         }
     }
