@@ -1214,15 +1214,6 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Indent Module.
-        /// </summary>
-        public static string CommandDescription_IndentCurrentModuleCommand {
-            get {
-                return ResourceManager.GetString("CommandDescription_IndentCurrentModuleCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Indent Procedure.
         /// </summary>
         public static string CommandDescription_IndentCurrentProcedureCommand {
@@ -2132,6 +2123,24 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hotkeys should include either Alt and/or Ctrl..
+        /// </summary>
+        public static string GeneralSettings_HotkeyRestrictionLabel {
+            get {
+                return ResourceManager.GetString("GeneralSettings_HotkeyRestrictionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This hotkey configuration may cause undesirable side affects..
+        /// </summary>
+        public static string GeneralSettings_HotkeyRestrictionToolTip {
+            get {
+                return ResourceManager.GetString("GeneralSettings_HotkeyRestrictionToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shift.
         /// </summary>
         public static string GeneralSettings_HotkeyShift {
@@ -2173,6 +2182,15 @@ namespace Rubberduck.UI {
         public static string GeneralSettings_MinimumLogLevelLabel {
             get {
                 return ResourceManager.GetString("GeneralSettings_MinimumLogLevelLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modifier Warning.
+        /// </summary>
+        public static string GeneralSettings_ModifierWarning {
+            get {
+                return ResourceManager.GetString("GeneralSettings_ModifierWarning", resourceCulture);
             }
         }
         
@@ -2416,6 +2434,15 @@ namespace Rubberduck.UI {
         public static string HotkeyDescription_TestExplorer {
             get {
                 return ResourceManager.GetString("HotkeyDescription_TestExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent Module.
+        /// </summary>
+        public static string HotkeyDescription_IndentCurrentModuleCommand {
+            get {
+                return ResourceManager.GetString("HotkeyDescription_IndentCurrentModuleCommand", resourceCulture);
             }
         }
         
