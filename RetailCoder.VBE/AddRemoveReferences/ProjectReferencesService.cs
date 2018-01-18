@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using Rubberduck.Parsing.ComReflection;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.AddRemoveReferences
@@ -33,6 +34,17 @@ namespace Rubberduck.AddRemoveReferences
         }
 
         public IEnumerable<ReferenceModel> AvailableProjects { get; }
+
+        public ReferenceModel GetLibraryInfo(string path)
+        {
+            var info = ReferencedDeclarationsCollector.LoadTypeLibInfo(path);
+            if (info == null)
+            {
+                return null;
+            }
+
+            return new ReferenceModel(info);
+        }
 
         public IEnumerable<ReferenceModel> References
         {

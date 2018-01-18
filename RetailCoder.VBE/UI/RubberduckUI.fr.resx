@@ -2092,7 +2092,7 @@ les projets dans le VBE.</value>
     <value>Appliquer</value>
   </data>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
-    <value>Modifier les Références</value>
+    <value>Rubberduck - Modifier les Références</value>
   </data>
   <data name="ProjectRefs_Title" xml:space="preserve">
     <value>Ajouter/Supprimer Références</value>
@@ -2114,5 +2114,11 @@ les projets dans le VBE.</value>
   </data>
   <data name="ToolsMenu_AddRemoveReferences" xml:space="preserve">
     <value>Références...</value>
+  </data>
+  <data name="AddRemoveReferences_BrowseFilter" xml:space="preserve">
+    <value>Librairie de types|*.tlb;*.olb;*.dll|All Files (*.*)|*.*</value>
+  </data>
+  <data name="AddRemoveReferences_CouldNotLoadLibrary" xml:space="preserve">
+    <value>Impossible de charger la librairie '{0}'.</value>
   </data>
 </root>

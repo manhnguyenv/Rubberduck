@@ -1,11 +1,13 @@
 using System;
+using Rubberduck.Parsing.ComReflection;
+using Rubberduck.UI;
 using Rubberduck.VBEditor;
 using Rubberduck.VBEditor.SafeComWrappers;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.AddRemoveReferences
 {
-    public class ReferenceModel
+    public class ReferenceModel : ViewModelBase
     {
         public ReferenceModel(IVBProject project)
         {
@@ -33,6 +35,19 @@ namespace Rubberduck.AddRemoveReferences
             IsVisible = true;
         }
 
+        public ReferenceModel(ComProject reference)
+        {
+            Name = reference.Documentation.Name;
+            Guid = reference.Guid.ToString();
+            Description = reference.Documentation.DocString;
+            Version = new Version((int)reference.MajorVersion, (int)reference.MinorVersion);
+            FullPath = reference.Path;
+            IsBuiltIn = false;
+            Type = ReferenceKind.TypeLibrary;
+            IsVisible = true;
+            IsSelected = true;
+        }
+
         public ReferenceModel(IReference reference, int priority)
         {
             IsSelected = true;
@@ -48,9 +63,47 @@ namespace Rubberduck.AddRemoveReferences
             IsVisible = true;
         }
 
-        public bool IsVisible { get; set; }
-        public bool IsSelected { get; set; }
-        public int Priority { get; set; }
+        private bool _isVisible;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _priority;
+        public int Priority
+        {
+            get => _priority;
+            set
+            {
+                if (_priority != value)
+                {
+                    _priority = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public string Name { get; }
         public string Guid { get; }

@@ -11,11 +11,13 @@ namespace Rubberduck.UI.Command
     public class AddRemoveReferencesCommand : CommandBase
     {
         private readonly RubberduckParserState _state;
+        private readonly IMessageBox _messageBox;
 
-        public AddRemoveReferencesCommand(RubberduckParserState state) 
+        public AddRemoveReferencesCommand(RubberduckParserState state, IMessageBox messageBox) 
             : base(LogManager.GetCurrentClassLogger())
         {
             _state = state;
+            _messageBox = messageBox;
         }
 
         protected override bool EvaluateCanExecute(object parameter)
@@ -31,7 +33,7 @@ namespace Rubberduck.UI.Command
                 var finder = new RegisteredLibraryFinderService(Environment.Is64BitProcess);
                 var fileDialog = new OpenFileDialog();
 
-                var vm = new AddRemoveReferencesViewModel(finder, service, fileDialog);
+                var vm = new AddRemoveReferencesViewModel(finder, service, fileDialog, _messageBox);
 
                 var presenter = new AddRemoveReferencesPresenter();
                 presenter.Show(vm);

@@ -115,17 +115,30 @@ namespace Rubberduck.Parsing.ComReflection
             return declarations;
         }
 
+        /// <summary>
+        /// Loads and returns the metadata for the library at the specified path.
+        /// </summary>
+        /// <param name="path">The full path of the library to load.</param>
+        /// <param name="loadModules">Optional, default false. True to load module & member metadata.</param>
+        /// <returns></returns>
+        public static ComProject LoadTypeLibInfo(string path, bool loadModules = false)
+        {
+            LoadTypeLibEx(path, REGKIND.REGKIND_NONE, out ITypeLib typeLibrary);
+            return typeLibrary == null 
+                ? null // failed to load type library
+                : new ComProject(typeLibrary, loadModules) { Path = path };
+        }
+
         public List<Declaration> LoadDeclarationsFromLibrary()
         {
-            ITypeLib typeLibrary;
             // Failure to load might mean that it's a "normal" VBProject that will get parsed by us anyway.
-            LoadTypeLibEx(_path, REGKIND.REGKIND_NONE, out typeLibrary);
+            LoadTypeLibEx(_path, REGKIND.REGKIND_NONE, out ITypeLib typeLibrary);
             if (typeLibrary == null)
             {
                 return _declarations;
             }
 
-            var type = new ComProject(typeLibrary) { Path = _path };
+            var type = LoadTypeLibInfo(_path, loadModules:true);
 
             var projectName = new QualifiedModuleName(type.Name, _path, type.Name);
             var project = new ProjectDeclaration(type, projectName);

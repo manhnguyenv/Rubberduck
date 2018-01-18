@@ -2089,12 +2089,15 @@ Möchten sie die Einstellungen in Rubberduck importieren?</value>
     <value>Bewerben</value>
   </data>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
-    <value>Projekt Referenzen</value>
+    <value>Rubberduck - Projekt Referenzen</value>
   </data>
   <data name="ProjectRefs_Tab_COM" xml:space="preserve">
     <value>COM</value>
   </data>
   <data name="ProjectRefs_Tab_VBA" xml:space="preserve">
     <value>VBA</value>
+  </data>
+  <data name="AddRemoveReferences_BrowseFilter" xml:space="preserve">
+    <value>Type Libraries|*.tlb;*.olb;*.dll|All Files (*.*)|*.*</value>
   </data>
 </root>

@@ -186,7 +186,34 @@ namespace Rubberduck.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Project References.
+        ///   Looks up a localized string similar to Type Libraries|*.tlb;*.olb;*.dll|All Files (*.*)|*.*.
+        /// </summary>
+        public static string AddRemoveReferences_BrowseFilter {
+            get {
+                return ResourceManager.GetString("AddRemoveReferences_BrowseFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string AddRemoveReferences_BrowseTitle {
+            get {
+                return ResourceManager.GetString("AddRemoveReferences_BrowseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not load library &apos;{0}&apos;..
+        /// </summary>
+        public static string AddRemoveReferences_CouldNotLoadLibrary {
+            get {
+                return ResourceManager.GetString("AddRemoveReferences_CouldNotLoadLibrary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rubberduck - Project References.
         /// </summary>
         public static string AddRemoveReferences_Title {
             get {
@@ -1210,6 +1237,15 @@ namespace Rubberduck.UI {
         public static string CommandDescription_FindSymbolCommand {
             get {
                 return ResourceManager.GetString("CommandDescription_FindSymbolCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent Module.
+        /// </summary>
+        public static string CommandDescription_IndentCurrentModuleCommand {
+            get {
+                return ResourceManager.GetString("CommandDescription_IndentCurrentModuleCommand", resourceCulture);
             }
         }
         
@@ -2434,15 +2470,6 @@ namespace Rubberduck.UI {
         public static string HotkeyDescription_TestExplorer {
             get {
                 return ResourceManager.GetString("HotkeyDescription_TestExplorer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Indent Module.
-        /// </summary>
-        public static string HotkeyDescription_IndentCurrentModuleCommand {
-            get {
-                return ResourceManager.GetString("HotkeyDescription_IndentCurrentModuleCommand", resourceCulture);
             }
         }
         
@@ -5724,6 +5751,33 @@ namespace Rubberduck.UI {
         public static string ToDoExplorerToDoItemFormat {
             get {
                 return ResourceManager.GetString("ToDoExplorerToDoItemFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BUG.
+        /// </summary>
+        public static string TodoMarkerBug {
+            get {
+                return ResourceManager.GetString("TodoMarkerBug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NOTE.
+        /// </summary>
+        public static string TodoMarkerNote {
+            get {
+                return ResourceManager.GetString("TodoMarkerNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TODO.
+        /// </summary>
+        public static string TodoMarkerTodo {
+            get {
+                return ResourceManager.GetString("TodoMarkerTodo", resourceCulture);
             }
         }
         

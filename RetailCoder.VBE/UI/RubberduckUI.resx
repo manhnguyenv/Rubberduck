@@ -2159,7 +2159,7 @@ Would you like to import them to Rubberduck?</value>
     <value>Apply</value>
   </data>
   <data name="AddRemoveReferences_Title" xml:space="preserve">
-    <value>Project References</value>
+    <value>Rubberduck - Project References</value>
   </data>
   <data name="ProjectRefs_Title" xml:space="preserve">
     <value>Add/Remove References</value>
@@ -2220,5 +2220,15 @@ Would you like to import them to Rubberduck?</value>
   </data>
   <data name="ToolsMenu_AddRemoveReferences" xml:space="preserve">
     <value>References...</value>
+  </data>
+  <data name="AddRemoveReferences_BrowseTitle" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AddRemoveReferences_BrowseFilter" xml:space="preserve">
+    <value>Type Libraries|*.tlb;*.olb;*.dll|All Files (*.*)|*.*</value>
+  </data>
+  <data name="AddRemoveReferences_CouldNotLoadLibrary" xml:space="preserve">
+    <value>Could not load library '{0}'.</value>
+    <comment>{0}: path/filename</comment>
   </data>
 </root>

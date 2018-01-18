@@ -75,10 +75,13 @@ namespace Rubberduck.Parsing.ComReflection
             }
         } 
 
-        public ComProject(ITypeLib typeLibrary) : base(typeLibrary, -1)
+        public ComProject(ITypeLib typeLibrary, bool loadModules = true) : base(typeLibrary, -1)
         {   
             ProcessLibraryAttributes(typeLibrary);
-            LoadModules(typeLibrary);
+            if (loadModules)
+            {
+                LoadModules(typeLibrary);
+            }
         }
 
         private void ProcessLibraryAttributes(ITypeLib typeLibrary)

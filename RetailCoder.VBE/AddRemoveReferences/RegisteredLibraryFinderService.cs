@@ -5,11 +5,11 @@ using Microsoft.Win32;
 
 namespace Rubberduck.AddRemoveReferences
 {
+    // based on the work of Ross Knudsen https://github.com/rossknudsen/Kavod.ComReflection
     public class RegisteredLibraryFinderService : IRegisteredLibraryFinderService
     {
         private readonly bool _use64BitPaths;
 
-        // inspired from https://github.com/rossknudsen/Kavod.ComReflection
         public RegisteredLibraryFinderService(bool use64BitPaths)
         {
             _use64BitPaths = use64BitPaths;

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Forms;
 using System.Windows.Input;
 using NLog;
 using Rubberduck.AddRemoveReferences;
@@ -13,19 +15,26 @@ namespace Rubberduck.UI.AddRemoveReferences
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IProjectReferencesService _service;
         private readonly IOpenFileDialog _fileDialog;
+        private readonly IMessageBox _messageBox;
 
-        public AddRemoveReferencesViewModel(IRegisteredLibraryFinderService finder, IProjectReferencesService service, IOpenFileDialog fileDialog)
+        public AddRemoveReferencesViewModel(IRegisteredLibraryFinderService finder, IProjectReferencesService service, IOpenFileDialog fileDialog, IMessageBox messageBox)
         {
-            _comLibraries = finder.FindRegisteredLibraries();
+            _comLibraries = new ObservableCollection<ReferenceModel>(finder.FindRegisteredLibraries());
             _vbProjects = service.AvailableProjects;
             _service = service;
             _fileDialog = fileDialog;
+            _messageBox = messageBox;
+            _fileDialog.Title = RubberduckUI.ResourceManager.GetString("AddRemoveReferences_BrowseTitle");
+            _fileDialog.Filter = RubberduckUI.ResourceManager.GetString("AddRemoveReferences_BrowseFilter");
+            _fileDialog.CheckFileExists = true;
+            _fileDialog.Multiselect = true;
 
             CancelCommand = new DelegateCommand(Logger, o => OnCancel(), o => true);
             OkCommand = new DelegateCommand(Logger, o => OnAccept(), o => true);
             ToggleSelectedCommand = new DelegateCommand(Logger, ExecuteToggleSelectedCommand, CanExecuteToggleSelectedCommand);
             MoveUpCommand = new DelegateCommand(Logger, ExecuteMoveUpCommand, CanExecuteMoveUpCommand);
             MoveDownCommand = new DelegateCommand(Logger, ExecuteMoveDownCommand, CanExecuteMoveDownCommand);
+            BrowseCommand = new DelegateCommand(Logger, ExecuteBrowseCommand, o => true);
 
             RefreshModel();
         }
@@ -76,6 +85,21 @@ namespace Rubberduck.UI.AddRemoveReferences
         /// </summary>
         public ICommand ApplyCommand { get; }
 
+        private bool _isDirty;
+
+        public bool IsDirty
+        {
+            get => _isDirty;
+            set
+            {
+                if (_isDirty != value)
+                {
+                    _isDirty = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         /// <summary>
         /// Toggles whether the selected reference is included or not.
         /// </summary>
@@ -91,7 +115,7 @@ namespace Rubberduck.UI.AddRemoveReferences
         /// </summary>
         public ICommand MoveDownCommand { get; }
 
-        private readonly IEnumerable<ReferenceModel> _comLibraries;
+        private readonly ObservableCollection<ReferenceModel> _comLibraries;
         public IEnumerable<ReferenceModel> ComLibraries { get { return _comLibraries.Where(r => r.IsSelected || r.IsVisible); } }
 
         private readonly IEnumerable<ReferenceModel> _vbProjects;
@@ -181,6 +205,8 @@ namespace Rubberduck.UI.AddRemoveReferences
             {
                 allRefs[priority].Priority = priority;
             }
+
+            IsDirty = true;
         }
 
         private bool CanExecuteMoveDownCommand(object item)
@@ -199,6 +225,39 @@ namespace Rubberduck.UI.AddRemoveReferences
             for (var priority = 0; priority < allRefs.Count; priority++)
             {
                 allRefs[priority].Priority = priority;
+            }
+
+            IsDirty = true;
+        }
+
+        private void ExecuteBrowseCommand(object o)
+        {
+            if (_fileDialog.ShowDialog() != DialogResult.Cancel)
+            {
+                foreach (var fileName in _fileDialog.FileNames)
+                {
+                    try
+                    {
+                        var info = _service.GetLibraryInfo(/*System.IO.Path.Combine(*//*path?*/fileName/*)*/);
+                        if (info != null)
+                        {
+                            _comLibraries.Add(info);
+                            IsDirty = true;
+                        }
+                        else
+                        {
+                            _messageBox.Show(RubberduckUI.AddRemoveReferences_CouldNotLoadLibrary,
+                                RubberduckUI.ToolsMenu_AddRemoveReferences, 
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Error(exception);
+                        _messageBox.Show(exception.Message, RubberduckUI.ToolsMenu_AddRemoveReferences, 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
     }
