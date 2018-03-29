@@ -77,22 +77,7 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
         public IVBProjects VBProjects => new VBProjects(IsWrappingNullReference ? null : Target.VBProjects);
 
         public IWindows Windows => new Windows(IsWrappingNullReference ? null : Target.Windows);
-
-        public Guid EventsInterfaceId => throw new NotImplementedException();
-
-        //public override void Release(bool final = false)
-        //{
-        //    if (!IsWrappingNullReference)
-        //    {
-        //        VBProjects.Release();
-        //        CodePanes.Release();
-        //        //CommandBars.Release();
-        //        Windows.Release();
-        //        AddIns.Release();
-        //        base.Release(final);
-        //    }
-        //}
-
+        
         public override bool Equals(ISafeComWrapper<VB.VBE> other)
         {
             return IsEqualIfNull(other) || (other != null && other.Target.Version == Version);
@@ -146,17 +131,17 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
             {
                 using (var component = components.SingleOrDefault(c => ComponentHasName(c, name))) 
                 {
-                    if (component == null || component.IsWrappingNullReference)
-                    {
-                        return;
-                    }
+            if (component == null || component.IsWrappingNullReference)
+            {
+                return;
+            }
 
                     using (var module = component.CodeModule)
                     {
                         using (var pane = module.CodePane)
                         {
-                            pane.Selection = selection;
-                        }
+            pane.Selection = selection;
+        }
                     }
                 }
             }
@@ -200,10 +185,10 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
             }
 
             var host = Path.GetFileName(System.Windows.Forms.Application.ExecutablePath).ToUpperInvariant();
-            //This needs the VBE as a ctor argument.
-            if (host.Equals("SLDWORKS.EXE"))
+            //These need the VBE as a ctor argument.
+            if (host.Equals("SLDWORKS.EXE") || host.Equals("POWERPNT.EXE"))
             {
-                return new SolidWorksApp(this);
+                return (IHostApplication)Activator.CreateInstance(HostAppMap[host], this);
             }
             //The rest don't.
             if (HostAppMap.ContainsKey(host))
@@ -241,7 +226,7 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
                                     result = new WordApp();
                                     break;
                                 case "Microsoft PowerPoint":
-                                    result = new PowerPointApp();
+                                    result = new PowerPointApp(this);
                                     break;
                                 case "Microsoft Outlook":
                                     result = new OutlookApp();
@@ -288,7 +273,7 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
                             case "Word":
                                 return new WordApp(this);
                             case "PowerPoint":
-                                return new PowerPointApp();
+                                return new PowerPointApp(this);
                             case "Outlook":
                                 return new OutlookApp();
                             case "MSProject":
@@ -337,73 +322,19 @@ namespace Rubberduck.VBEditor.SafeComWrappers.VBA
             }
             return null;
         }
-
-        /// <summary> Returns whether the host supports unit tests.</summary>
-        public bool HostSupportsUnitTests()
+        
+        public QualifiedSelection? GetActiveSelection()
         {
-            var host = Path.GetFileName(System.Windows.Forms.Application.ExecutablePath).ToUpperInvariant();
-            if (HostAppMap.ContainsKey(host))
+            using (var activePane = ActiveCodePane)
             {
-                return true;
-            }
-            //Guessing the above will work like 99.9999% of the time for supported applications.
-
-            var project = ActiveVBProject;
-            {
-                if (project.IsWrappingNullReference)
+                if (activePane == null || activePane.IsWrappingNullReference)
                 {
-                    const int ctlViewHost = 106;
-                    var commandBars = CommandBars;
-                    var hostAppControl = commandBars.FindControl(ControlType.Button, ctlViewHost);
-                    {
-                        if (hostAppControl.IsWrappingNullReference)
-                        {
-                            return false;
-                        }
-
-                        switch (hostAppControl.Caption)
-                        {
-                            case "Microsoft Excel":
-                            case "Microsoft Access":
-                            case "Microsoft Word":
-                            case "Microsoft PowerPoint":
-                            case "Microsoft Outlook":
-                            case "Microsoft Project":
-                            case "Microsoft Publisher":
-                            case "Microsoft Visio":
-                            case "AutoCAD":
-                            case "CorelDRAW":
-                            case "SolidWorks":
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
+                    return null;
                 }
 
-                var references = project.References;
-                {
-                    foreach (var reference in references.Where(reference => (reference.IsBuiltIn && reference.Name != "VBA") || (reference.Name == "AutoCAD")))
-                    {
-                        switch (reference.Name)
-                        {
-                            case "Excel":
-                            case "Access":
-                            case "Word":
-                            case "PowerPoint":
-                            case "Outlook":
-                            case "MSProject":
-                            case "Publisher":
-                            case "Visio":
-                            case "AutoCAD":
-                            case "CorelDRAW":
-                            case "SolidWorks":
-                                return true;
-                        }
-                    }
-                }
+                return activePane.GetQualifiedSelection();
             }
-            return false;
         }
     }
 }
+
