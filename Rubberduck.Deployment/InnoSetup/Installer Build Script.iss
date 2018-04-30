@@ -1,3 +1,5 @@
+﻿;The file must be encoded in UTF-8 BOM
+
 #pragma include __INCLUDE__ + ";" + SourcePath + "\Includes\"
 
 #define protected
@@ -103,15 +105,18 @@ Source: "{#IncludesDir}Rubberduck.RegisterAddIn.reg"; DestDir: "{app}"; Flags: i
 ; Use [Code] section (RegisterAddIn procedure) to register the entries instead.
 #include <Rubberduck.reg.iss>
 
-[UninstallDelete]
-Type: filesandordirs; Name: "{userappdata}\{#AppName}"
+; Commneted out because we don't want to delete users setting when they are just
+; uninstalling to install another version of Rubberduck. Considered prompting to
+; delete but not for right now. 
+; [UninstallDelete]
+; Type: filesandordirs; Name: "{userappdata}\{#AppName}"
 
 [CustomMessages]
 ; TODO add additional languages here by adding include files in \Includes folder
 ;      and uncomment or add lines to include the file.
 #include <English.CustomMessages.iss>
-; #include <French.CustomMessages.iss>
-; #include <German.CustomMessages.iss>
+#include <French.CustomMessages.iss>
+#include <German.CustomMessages.iss>
 
 [Icons]
 Name: "{group}\{cm:ProgramOnTheWeb,{#AppName}}"; Filename: "{#AppURL}"
@@ -233,7 +238,7 @@ function ShellExecute(hwnd: HWND; lpOperation: string; lpFile: string;
 ///</remarks>
 function IsElevated: Boolean;
 begin
-  Result := IsAdminLoggedOn or IsPowerUserLoggedOn;
+  Result := IsAdminLoggedOn;
 end;
 
 ///<remarks>
@@ -509,18 +514,19 @@ end;
 
 ///<remarks>
 ///Called after successfully installing, including via the elevated installer
-///to register the VBE addin. Should be never run under elevated context
-///or the registration may not work as expected.
+///to register the VBE addin.
 ///</remarks>
 procedure RegisterAddin();
 begin
-  if not IsElevated() then
-  begin
-    RegisterAddinForIDE(HKCU32, 'Software\Microsoft\VBA\VBE\6.0\Addins', '{#AddinProgId}');
-
     if IsWin64() then 
+    begin
+      RegisterAddinForIDE(HKCU32, 'Software\Microsoft\VBA\VBE\6.0\Addins', '{#AddinProgId}');
       RegisterAddinForIDE(HKCU64, 'Software\Microsoft\VBA\VBE\6.0\Addins64', '{#AddinProgId}');
-  end;
+    end
+      else
+    begin
+      RegisterAddinForIDE(HKCU, 'Software\Microsoft\VBA\VBE\6.0\Addins', '{#AddinProgId}');
+    end;
 end;
 
 ///<remarks>
@@ -772,6 +778,7 @@ end;
 procedure InitializeWizard();
 begin
   HasElevateSwitch := CmdLineParamExists('/ELEVATE');
+
   Log(Format('HasElevateSwitch: %d', [HasElevateSwitch]));
   Log(Format('IsElevated: %d', [IsElevated()]));
 
@@ -810,11 +817,10 @@ begin
       ExpandConstant('{cm:RegisterAddInCaption}'),
       ExpandConstant('{cm:RegisterAddInMessage}'),
       ExpandConstant('{cm:RegisterAddInDescription}'),
-      False, False);
+      false, false);
 
   RegisterAddInOptionPage.Add(ExpandConstant('{cm:RegisterAddInButtonCaption}'));
-  RegisterAddInOptionPage.CheckListBox.ItemEnabled[0] := not IsElevated();
-  RegisterAddInOptionPage.Values[0] := not IsElevated();
+  RegisterAddInOptionPage.Values[0] := true;
 end;
 
 ///<remarks>
@@ -839,14 +845,6 @@ begin
   begin
     Log('PageSkipped set to true now');
     PagesSkipped := True;
-  end;
-
-  // If the installer is elevated, we cannot register the addin so we must skip the
-  // custom page.
-  if (PageID = RegisterAddInOptionPage.ID) and IsElevated() then
-  begin
-    Log('RegisterAddInOptionPage skipped because we are running elevated.');
-    Result := true;
   end;
 
   // We don't need to show the users finished panel from the elevated installer
@@ -992,14 +990,14 @@ begin
     // custom page we should run RegisterAdd()
     else if CurPageID = RegisterAddInOptionPage.ID then
   begin
-    if not IsElevated() and RegisterAddInOptionPage.Values[0] then
+    if RegisterAddInOptionPage.Values[0] then
     begin
       Log('Addin registration was requested and will be performed');
       RegisterAddIn();
     end
       else
     begin
-      Log('Addin registration was declined because either we are elevated or the user unchecked the checkbox');
+      Log('Addin registration was declined because the user unchecked the checkbox');
     end;
   end;
 
@@ -1063,5 +1061,8 @@ end;
 ///</remarks>
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  if CurUninstallStep = usUninstall then UnregisterAddin();
+  if CurUninstallStep = usUninstall then
+  begin
+    UnregisterAddin();
+  end;
 end;

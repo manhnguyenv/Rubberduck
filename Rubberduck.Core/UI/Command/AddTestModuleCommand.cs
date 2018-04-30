@@ -7,7 +7,6 @@ using Rubberduck.Settings;
 using Rubberduck.UnitTesting;
 using Rubberduck.VBEditor.SafeComWrappers;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
-using Rubberduck.VBEditor.SafeComWrappers.VBA;
 using System.Text;
 using Rubberduck.Parsing.Symbols;
 using System;
@@ -121,26 +120,24 @@ namespace Rubberduck.UI.Command
 
         private IVBProject GetProject()
         {
-            using (var activeProject = _vbe.ActiveVBProject)
+            var activeProject = _vbe.ActiveVBProject;
+            if (!activeProject.IsWrappingNullReference)
             {
-                if (!activeProject.IsWrappingNullReference)
-                {
-                    return activeProject;
-                }
+                return activeProject;
             }
 
             using (var projects = _vbe.VBProjects)
             {
                 return projects.Count == 1
-                    ? projects[1]
-                    : new VBProject(null);
+                    ? projects[1] // because VBA-Side indexing
+                    : null;
             }
         }
 
         protected override bool EvaluateCanExecute(object parameter)
         {
             var project = GetProject();
-            return !project.IsWrappingNullReference && CanExecuteCode(project);
+            return project != null && !project.IsWrappingNullReference && CanExecuteCode(project);
         }
         
         private bool CanExecuteCode(IVBProject project)

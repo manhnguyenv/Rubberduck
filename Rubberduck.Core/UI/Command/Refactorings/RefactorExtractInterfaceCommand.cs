@@ -2,14 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Antlr4.Runtime;
-using Microsoft.VB6.Interop.VBIDE;
 using Rubberduck.Parsing;
 using Rubberduck.Parsing.Grammar;
 using Rubberduck.Parsing.Symbols;
 using Rubberduck.Parsing.VBA;
 using Rubberduck.Refactorings.ExtractInterface;
 using Rubberduck.UI.Refactorings;
-using Rubberduck.VBEditor;
 using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.Command.Refactorings
@@ -67,7 +65,9 @@ namespace Rubberduck.UI.Command.Refactorings
             var context = ((ParserRuleContext)parseTree).GetDescendents<VBAParser.ImplementsStmtContext>();
 
             // true if active code pane is for a class/document/form module
-            return !context.Any();
+            return !context.Any() 
+                && !_state.IsNewOrModified(interfaceClass.QualifiedModuleName) 
+                && !_state.IsNewOrModified(selection.Value.QualifiedName);
         }
 
         protected override void OnExecute(object parameter)

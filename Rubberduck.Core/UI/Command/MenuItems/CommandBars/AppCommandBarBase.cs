@@ -5,9 +5,8 @@ using System.Runtime.InteropServices;
 using NLog;
 using Rubberduck.Parsing.UIContext;
 using Rubberduck.Parsing.VBA;
-using Rubberduck.UI.Command.MenuItems.ParentMenus;
-using Rubberduck.VBEditor.SafeComWrappers.Office.Core;
-using Rubberduck.VBEditor.SafeComWrappers.Office.Core.Abstract;
+using Rubberduck.VBEditor.SafeComWrappers;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.Command.MenuItems.CommandBars
 {
@@ -120,7 +119,7 @@ namespace Rubberduck.UI.Command.MenuItems.CommandBars
             ICommandBarButton child;
             using (var controls = Item.Controls)
             {
-                child = CommandBarButtonFactory.Create(controls);
+                child = controls.AddButton();
             }
             child.Style = item.ButtonStyle;
             child.Picture = item.Image;

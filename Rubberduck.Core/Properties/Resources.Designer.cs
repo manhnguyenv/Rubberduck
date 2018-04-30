@@ -923,9 +923,9 @@ namespace Rubberduck.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap RD_300x250_base {
+        internal static System.Drawing.Bitmap RD2018_Splash {
             get {
-                object obj = ResourceManager.GetObject("RD-300x250-base", resourceCulture);
+                object obj = ResourceManager.GetObject("RD2018_Splash", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

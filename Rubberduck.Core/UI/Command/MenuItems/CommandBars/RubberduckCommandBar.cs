@@ -6,7 +6,7 @@ using Rubberduck.Parsing;
 using Rubberduck.Parsing.Symbols;
 using Rubberduck.Parsing.UIContext;
 using Rubberduck.Parsing.VBA;
-using Rubberduck.VBEditor.SafeComWrappers.Office.Core;
+using Rubberduck.VBEditor.SafeComWrappers;
 
 namespace Rubberduck.UI.Command.MenuItems.CommandBars
 {

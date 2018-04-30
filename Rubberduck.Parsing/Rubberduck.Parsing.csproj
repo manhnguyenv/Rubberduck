@@ -137,6 +137,7 @@
     <Compile Include="Binding\Bindings\ParenthesizedDefaultBinding.cs" />
     <Compile Include="Binding\TypeBindingContext.cs" />
     <Compile Include="Binding\ExpressionClassification.cs" />
+    <Compile Include="Inspections\RequiredHostAttribute.cs" />
     <Compile Include="ProjectsProviderExtensions.cs" />
     <Compile Include="Common\ExperimentalAttribute.cs" />
     <Compile Include="ComReflection\ComAlias.cs" />
@@ -422,12 +423,6 @@
     <Compile Include="VBA\VBAModuleParser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Rubberduck.SettingsProvider\Rubberduck.SettingsProvider.csproj">
       <Project>{E85E1253-86D6-45EE-968B-F37348D44132}</Project>
       <Name>Rubberduck.SettingsProvider</Name>
@@ -460,7 +455,12 @@
       <LastGenOutput>ParsingText.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

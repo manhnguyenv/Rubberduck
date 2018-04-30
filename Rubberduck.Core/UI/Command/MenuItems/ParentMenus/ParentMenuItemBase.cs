@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Linq;
 using Rubberduck.Parsing.VBA;
 using NLog;
-using Rubberduck.VBEditor.SafeComWrappers.Office.Core;
-using Rubberduck.VBEditor.SafeComWrappers.Office.Core.Abstract;
+using Rubberduck.VBEditor.SafeComWrappers;
+using Rubberduck.VBEditor.SafeComWrappers.Abstract;
 
 namespace Rubberduck.UI.Command.MenuItems.ParentMenus
 {
@@ -72,9 +72,7 @@ namespace Rubberduck.UI.Command.MenuItems.ParentMenus
                 return;
             }
 
-            Item = _beforeIndex.HasValue
-                ? CommandBarPopupFactory.Create(Parent, _beforeIndex.Value)
-                : CommandBarPopupFactory.Create(Parent);
+            Item =  Parent.AddPopup(_beforeIndex);                
 
             Item.Tag = _key;
 
@@ -159,7 +157,7 @@ namespace Rubberduck.UI.Command.MenuItems.ParentMenus
             ICommandBarButton child;
             using (var controls = Item.Controls)
             {
-                child = CommandBarButtonFactory.Create(controls);
+                child = controls.AddButton();                
             }
             child.Picture = item.Image;
             child.Mask = item.Mask;
